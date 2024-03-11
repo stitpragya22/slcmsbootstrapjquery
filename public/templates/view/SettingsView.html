@@ -1,0 +1,90 @@
+<?= $this->extend("layouts/admindash") ?>
+<?= $this->section("body") ?>
+<?php foreach ($settings as $key => $val){?>
+<div class="card shadow mb-4">
+   <div class="card-header">
+      <strong class="card-title"><?=$page_title?></strong>
+   </div>
+
+
+    <form action="<?=base_url('admin/settings/{PathName}')?>" method="post" class="form-horizontal" enctype="multipart/form-data">
+      <div class="card-body">
+          <h3><?=ucwords(implode(' ',explode('_',$key)))?></h3>
+          <p><?=$val['hint']?></p>
+         <div class="row">
+            <div class="col-md-9">
+                <?php 
+                    if($val['type']=='image'){?>
+             <div class="form-group mb-3">
+               <div class="custom-file">
+                    <input type="file" name="<?=$key?>" class="form-control-file" id="image-<?=$key?>" required >
+                    <label class="custom-file-label" for="image-<?=$key?>">Choose file</label>
+                </div>
+             </div>
+             <br>
+             <img src="<?=base_url('uploads/settings/{PathName}/'.$val['value'])?>" class="img-thumbnail" />
+             <?php }elseif($val['type']=='text' || $val['type']=='number' || $val['type']=='color'){?>
+                    <div class="form-group mb-3">
+                 <input type="<?=$val['type']?>" name="<?=$key?>" value="<?=$val['value']?>" class="form-control fill">
+              </div>
+                <?php }elseif($val['type']=='fontawaysome'){?>
+                <style>
+                    .select2-selection__rendered, .select2-results__option {
+                  font-family: FontAwesome, sans-serif;
+                  /*font-size: 12px;*/
+                }
+                </style>
+                <div class="form-group mb-3">
+                    <select class="text-primary fa-select select2 form-control fill" name="<?=$key?>" style="font-family: 'FontAwesome', 'sans-serif';" required>
+                        <?php foreach ($faicons as $key2=>$val2){
+                        $selected=($key2==$val['value'])?'selected':'';
+                        ?>
+                            <option value="<?=$key2?>"  <?=($selected)?> > <?=$val2?>  <?=$key2?> </option>
+                        <?php }?>
+                   </select>
+                </div>
+                <?php }elseif($val['type']=='flaticons'){ ?>
+                <style>
+                    .select2-selection__rendered, .select2-results__option {
+                  font-family: Flaticon, sans-serif;
+                  /*font-size: 12px;*/
+                }
+                </style>
+                <div class="form-group mb-3">
+                    <select class="text-primary fa-select select2 form-control fill" name="<?=$key?>" style="font-family: 'Flaticon', 'sans-serif';" required>
+                        <?php foreach ($flaticons as $key2=>$val2){
+                        $selected=($key2==$val['value'])?'selected':'';
+                        ?>
+                            <option value="<?=$key2?>"  <?=($selected)?> > <?=$val2?>  <?=$key2?> </option>
+                        <?php }?>
+                   </select>
+                </div>
+                <?php }elseif($val['type']=='dbmodel'|| $val['type']=='fixedselect'){
+                    $options=$val['options'];?>
+                    <div class="form-group mb-3">
+                    <select class="text-primary fa-select select2 form-control fill" name="<?=$key?>" required>
+                        <?php foreach ($options as $key2=>$val2){
+                        $selected=($key2==$val['value'])?'selected':'';
+                        ?>
+                            <option value="<?=$key2?>"  <?=($selected)?> > <?=$val2?> </option>
+                        <?php }?>
+                   </select>
+                </div>
+                <?php }else{?>
+                <div class="form-group mb-3">
+                    <textarea  name="<?=$key?>" class="form-control texteditor"><?=$val['value']?></textarea>
+                </div>
+                <?php }?>
+            </div>
+             <div class="col-md-3">
+                 <input type="hidden" name="type" value="<?=$val['type']?>" />
+                 <input type="hidden" name="key" value="<?=$key?>" />
+                 <button class="btn btn-primary" type="submit"><i class="icofont icofont-check-circled"></i>Save</button>
+             </div>
+         </div>
+         </div>
+   </form>
+
+</div>
+ <?php } ?>
+<?= $this->endSection() ?>
