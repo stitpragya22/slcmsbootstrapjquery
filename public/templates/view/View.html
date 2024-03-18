@@ -78,7 +78,7 @@
                                             <td><?=$i++;?></td>
                                             {TableFields}
                                             
-                                            <td><a href="<?=base_url('{Name}Controller/index/'.$record['id'])?>">Edit</a> &nbsp; <a class="deletelink" href="<?=base_url('{Name}Controller/delete/'.$record['id'])?>">Delete</a></td>
+                                            <td><a href="<?=base_url('{Name}Controller/index/'.$record['id'])?>">Edit</a> &nbsp; <a class="deletelink" href="<?=base_url('{Name}Controller/delete/'.$record['id'])?>"  onclick="return confirm('Are you sure you want to delete this item?')">Delete</a></td>
                                         </tr>
                                         <?php } ?>
                                     </tbody>

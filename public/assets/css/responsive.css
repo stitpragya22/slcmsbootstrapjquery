@@ -1,0 +1,15 @@
+@media only screen and (max-width: 768px) {
+
+.hero{
+    height: 50vh;
+}
+.hero > .container{
+    width: 94%;
+}
+
+.min-200{
+    min-height: 250px;
+}
+    
+    
+}
