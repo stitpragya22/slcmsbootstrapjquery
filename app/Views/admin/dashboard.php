@@ -1,4 +1,4 @@
-<?= $this->extend("layouts/app") ?>
+<?= $this->extend("layouts/admindash") ?>
 
 <?= $this->section("body") ?>
 

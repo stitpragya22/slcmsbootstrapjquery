@@ -16,7 +16,7 @@ class App extends BaseConfig
      *
      * E.g., http://example.com/
      */
-    public string $baseURL = 'https://localhost/appstarter';
+    public string $baseURL = 'https://localhost/slcmsbootstrapjquery';
 
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.

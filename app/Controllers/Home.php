@@ -1,11 +1,14 @@
 <?php
 
 namespace App\Controllers;
+use App\Plugins\HelloWorldPlugin\HelloWorldPlugin;
+use App\Plugins\TaskManagerPlugin;
 
 class Home extends BaseController
 {
-    public function index(): string
+    public function index()
     {
-        return view('welcome_message');
+        $plugin = new HelloWorldPlugin();
+        echo $plugin->renderHelloWorldMessage();
     }
 }

@@ -74,21 +74,26 @@ $tools = new ToolsController();
           // echo "<p class='text-center text-white border-top border-white'>CRUD Management</p>";
 
           $menu = [];
-          
+
           $menu[''] = [
             'label' => 'Dashboard',
             'icon' => 'align-left',
             'submenu' => false,
           ];
 
-
-          $menu['ItemFamily'] = [
-            'label' => 'ItemFamily',
+          $menu['Test'] = [
+            'label' => 'Test',
             'icon' => 'align-left',
             'submenu' => false,
           ];
-          
+          $menu['Links'] = [
+            'label' => 'Links',
+            'icon' => 'align-left',
+            'submenu' => false,
+          ];
           // {Menu Array}
+
+
 
           ksort($menu);
           foreach ($menu as $mk => $mv) {
@@ -112,6 +117,14 @@ $tools = new ToolsController();
                 </ul>
               </li>
             <?php }
+          }
+          // Add the Plugins section
+          echo '<li class="sidebar-header font-weight-bold">Plugins</li>';
+          // Dynamically generate links for each plugin
+          $pluginsPath = FCPATH . 'Plugins/';
+          $plugins = array_diff(scandir($pluginsPath), ['.', '..']);
+          foreach ($plugins as $plugin) {
+            echo '<a href="' . base_url('addons/' . $plugin) . '" class="list-group-item list-group-item-action py-2 ripple plugin-link"><i class="fas fa-plugin"></i>' . $plugin . '</a>';
           }
           echo '<li class="sidebar-header font-weight-bold">
 						Other Settings
