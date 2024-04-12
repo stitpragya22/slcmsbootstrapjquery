@@ -1,7 +1,6 @@
-<?php 
-// plugins/TaskManagerPlugin/TaskManagerPluginController.php
+<?php
 
-namespace App\Plugins\TaskManagerPlugin;
+namespace Plugins\TaskManagerPlugin;
 
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\RequestInterface;
@@ -18,7 +17,8 @@ class TaskManagerPluginController extends Controller
     {
         $model = new TaskManagerPluginModel();
         $data['tasks'] = $model->findAll();
-        return view('App\Plugins\TaskManagerPlugin\Views\task_list', $data);
+        return view('Plugins\TaskManagerPlugin\Views\task_list', $data);
+        // return view('Plugins/TaskManagerPlugin/Views/task_list', $data);
     }
 
     public function create()
@@ -36,6 +36,6 @@ class TaskManagerPluginController extends Controller
             ]);
         }
 
-        return view('App\Plugins\TaskManagerPlugin\Views\create_task');
+        return view('Plugins\TaskManagerPlugin\Views\create_task');
     }
 }

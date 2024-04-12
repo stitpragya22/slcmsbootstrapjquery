@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Plugins\HelloWorldPlugin;
+namespace Plugins\HelloWorldPlugin;
 
 use CodeIgniter\Controller;
 
@@ -8,6 +8,6 @@ class HelloWorldPluginController extends Controller
 {
     public function index()
     {
-        return "Hello, World! This is from the HelloWorldPlugin.";
+        return view('Plugins\HelloWorldPlugin\Views\index');
     }
 }

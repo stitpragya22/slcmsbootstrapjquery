@@ -1,7 +1,7 @@
 <?php
 // plugins/TaskManagerPlugin/TaskManagerPluginModel.php
 
-namespace App\Plugins\TaskManagerPlugin;
+namespace Plugins\TaskManagerPlugin;
 
 use CodeIgniter\Model;
 

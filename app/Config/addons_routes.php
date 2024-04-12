@@ -29,7 +29,7 @@ $routes->group('addons', function ($routes) {
     // Route for plugin name and method
     $routes->add('(:segment)/(:segment)', function ($pluginName, $method = 'index') {
         // Construct the fully qualified namespace of the plugin controller
-        $controllerNamespace = 'App\Plugins\\' . $pluginName . '\\' . $pluginName . 'Controller';
+        $controllerNamespace = 'Plugins\\' . $pluginName . '\\' . $pluginName . 'Controller';
 
         // Manually instantiate the Request object
         $request = service('request');
