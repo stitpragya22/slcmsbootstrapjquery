@@ -16,7 +16,7 @@ class UserController extends BaseController
     {
         $data = [];
 
-        if ($this->request->getMethod() == 'post') {
+        if ($this->request->getPost()) {
 
             $rules = [
                 'email' => 'required|min_length[6]|max_length[50]|valid_email',

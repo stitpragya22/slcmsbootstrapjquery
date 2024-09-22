@@ -3,9 +3,9 @@
 namespace App\Controllers;
 use App\Models\UserModel;
 use App\Controllers\BaseController;
-use App\Models\LinksModel;
+use App\Models\PostModel;
 
-class LinksController extends BaseController
+class PostController extends BaseController
 {
     public $role='';
     public function __construct()
@@ -101,15 +101,15 @@ class LinksController extends BaseController
         $model=new UserModel();
         $admin=$model->where('role','admin')->first();
         $data['admin']=$admin;
-        session()->set('currentMenu','Links');
-        $model=new LinksModel();
+        session()->set('currentMenu','Post');
+        $model=new PostModel();
         if($id>0){
         $data['CurrentRecord']=$model->where('id',$id)->first();
         }
         $data['records']=$model->findAll();
-        $data['bread']='Add/Edit Links';
+        $data['bread']='Add/Edit Post';
         
-        return view($this->role.'/links/add_edit',$data);
+        return view($this->role.'/post/add_edit',$data);
         
     }
     
@@ -118,12 +118,9 @@ class LinksController extends BaseController
         {
             session()->setFlashdata("mtype", "warning");
             $id=(null !== $this->request->getVar('id'))?$this->request->getVar('id'):0;
-            $model=new LinksModel();
+            $model=new PostModel();
             $data=[
                  "title" => $this->request->getVar("title") , 
-       "link" => $this->request->getVar("link") , 
-       "description" => $this->request->getVar("description") , 
-       "status" => $this->request->getVar("status") , 
       
                 ];
             if($id>0)
@@ -138,25 +135,25 @@ class LinksController extends BaseController
             }    
                 
           
-          $target_dir="uploads/linkss";
+          $target_dir="uploads/posts";
             $size=500000*100;
-            $file=$_FILES['image'];
+            $file=$_FILES['thumbnail'];
             $uploadResult=$this->checkAndUploadImage($file, $target_dir, $size);
             $uploadOk=$uploadResult['uploadOk'];
             if($uploadOk==1){
-                $data['image']=$uploadResult['filename'];
+                $data['thumbnail']=$uploadResult['filename'];
             }
             else{
                 if($id==0)
                 {
-                    session()->setFlashdata("message", "The image is Must For New Links ");
+                    session()->setFlashdata("message", "The thumbnail is Must For New Post ");
                      return redirect()->back()->withInput();
                 }
                 else{
-                    if(($_FILES['image']['tmp_name'])!="")
+                    if(($_FILES['thumbnail']['tmp_name'])!="")
                     {
                         
-                    session()->setFlashdata("message", "The image is Invalid");
+                    session()->setFlashdata("message", "The thumbnail is Invalid");
                      return redirect()->back()->withInput();
                     }
                 }
@@ -164,18 +161,18 @@ class LinksController extends BaseController
           
                 $model->save($data);
                 session()->setFlashdata("mtype", "success");
-                session()->setFlashdata("message", " Links Stored Successfully!");
-                return redirect()->to(base_url('/LinksController'));
+                session()->setFlashdata("message", " Post Stored Successfully!");
+                return redirect()->to(base_url('/PostController'));
         }
         
         
         public function delete($id)
         {
-            $model=new LinksModel();
+            $model=new PostModel();
             $model->where('id',$id)->delete();
             session()->setFlashdata("mtype", "success");
-            session()->setFlashdata("message", " Links Deleted Successfully!");
-            return redirect()->to(base_url('/LinksController'));
+            session()->setFlashdata("message", " Post Deleted Successfully!");
+            return redirect()->to(base_url('/PostController'));
             
         }
     

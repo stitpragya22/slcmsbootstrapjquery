@@ -661,10 +661,10 @@ $query   = $db->query($q1);
           <div class="form-group col-md-6 mb-3">
             <label for="'.$key.'" class="control-label mb-1">'.ucfirst($key).' </label>
             
-        <? if(isset($CurrentRecord)){ ?>
+        <?php if(isset($CurrentRecord)){ ?>
         <input id="'.$key.'" name="'.$key.'" type="file" class="form-control" value="<?=base_url(\'uploads/'.strtolower($this->name).'s/\'.$'.$key.')?>" >
         <img src="<?=base_url(\'uploads/'.strtolower($this->name).'s/\'.$'.$key.')?>" class="w-100" />
-        <? } else {?>
+        <?php } else {?>
         <input id="'.$key.'" name="'.$key.'" type="file" class="form-control" value="<?=base_url(\'uploads/'.strtolower($this->name).'s/\'.$'.$key.')?>" '.$required.'>
         <?php } ?>
           </div>
@@ -678,10 +678,10 @@ $query   = $db->query($q1);
           <div class="form-group col-md-6 mb-3">
             <label for="'.$key.'" class="control-label mb-1">'.ucfirst($key).' </label>
             
-        <? if(isset($CurrentRecord)){ ?>
+        <?php if(isset($CurrentRecord)){ ?>
         <input id="'.$key.'" name="'.$key.'" type="file" class="form-control" value="<?=base_url(\'uploads/'.strtolower($this->name).'s/\'.$'.$key.')?>" >
         <p><a href="<?=base_url(\'uploads/'.strtolower($this->name).'s/\'.$'.$key.')?>"> Download </a></p>
-        <? } else {?>
+        <?php } else {?>
         <input id="'.$key.'" name="'.$key.'" type="file" class="form-control" value="<?=base_url(\'uploads/'.strtolower($this->name).'s/\'.$'.$key.')?>" '.$required.'>
         <?php } ?>
           </div>

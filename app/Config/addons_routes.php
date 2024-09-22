@@ -1,4 +1,7 @@
 <?php
+$routes->get('plugins/activate/(:segment)', 'PluginsController::activate/$1');
+$routes->get('plugins/deactivate/(:segment)', 'PluginsController::deactivate/$1');
+
 // app/Config/addons_routes.php
 $routes->group('addons', function ($routes) {
     // Route for plugin name only, redirects to index method

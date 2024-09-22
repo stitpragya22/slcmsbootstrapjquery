@@ -130,7 +130,7 @@ class TestController extends BaseController
             {
                 if($val=="" || $val==NULL)
                 {
-                    session()->setFlashdata("message", "The ".$key." is Must For Job Post");
+                    session()->setFlashdata("message", "The ".$key." is Must");
                     return redirect()->back()->withInput();
                 }
             }    

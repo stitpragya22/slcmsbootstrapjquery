@@ -91,7 +91,25 @@ $tools = new ToolsController();
             'icon' => 'align-left',
             'submenu' => false,
           ];
-          // {Menu Array}
+          $menu['Post'] =[
+				        'label'=>'Post',
+				        'icon'=>'align-left',
+				        'submenu'=>false,
+				            ];
+                    $menu['Post'] =[
+				        'label'=>'Post',
+				        'icon'=>'align-left',
+				        'submenu'=>false,
+				            ];
+                    $menu['Swapnil'] =[
+				        'label'=>'Swapnil',
+				        'icon'=>'align-left',
+				        'submenu'=>false,
+				            ];
+                    // {Menu Array}
+                    
+                    
+                    
 
 
 
@@ -122,7 +140,9 @@ $tools = new ToolsController();
           echo '<li class="sidebar-header font-weight-bold">Plugins</li>';
           // Dynamically generate links for each plugin
           $pluginsPath = FCPATH . 'Plugins/';
-          $plugins = array_diff(scandir($pluginsPath), ['.', '..']);
+          $plugins = array_filter(scandir($pluginsPath), function ($item) use ($pluginsPath) {
+            return is_dir($pluginsPath . $item) && !in_array($item, ['.', '..']);
+        });
           foreach ($plugins as $plugin) {
             echo '<a href="' . base_url('addons/' . $plugin) . '" class="list-group-item list-group-item-action py-2 ripple plugin-link"><i class="fas fa-plugin"></i>' . $plugin . '</a>';
           }

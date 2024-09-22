@@ -18,4 +18,10 @@ class AdminController extends BaseController
     {
         return view("admin/dashboard");
     }
+
+    
+    public function testing()
+    {
+        die('testing');
+    }
 }
