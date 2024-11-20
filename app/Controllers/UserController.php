@@ -67,6 +67,7 @@ class UserController extends BaseController
             'email' => $user['email'],
             'isLoggedIn' => true,
             "role" => $user['role'],
+            "profile_pic"=> $user["profile_pic"],
         ];
 
         session()->set($data);

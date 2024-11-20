@@ -16,27 +16,12 @@ $routes->match(['get', 'post'], 'login', 'UserController::login', ["filter" => "
 $routes->group("admin", ["filter" => "auth"], function ($routes) {
     $routes->get("/", "AdminController::index");
     $routes->get('addons','PluginsController::addons');
-    $routes->get("testing", "AdminController::testing");
     //Admin Routes
     
-        $routes->get("Test", "TestController::index");
-        $routes->post("Test", "TestController::Store");
-        //
-        
-        $routes->get("Links", "LinksController::index");
-        $routes->post("Links", "LinksController::Store");
-        //
-        
-        $routes->get("Post", "PostController::index");
-        $routes->post("Post", "PostController::Store");
-        //
-        
-        $routes->get("Post", "PostController::index");
-        $routes->post("Post", "PostController::Store");
-        //
-        
-        $routes->get("Swapnil", "SwapnilController::index");
-        $routes->post("Swapnil", "SwapnilController::Store");
+    $routes->get("profile", "AdminController::profile");
+    $routes->post("profile", "AdminController::UpdateProfile");
+    $routes->post("updatepassword", "AdminController::UpdatePassword");
+
         //
         // {New Admin Routes}
 
