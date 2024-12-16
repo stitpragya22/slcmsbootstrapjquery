@@ -101,7 +101,7 @@ class {ClassName} extends BaseController
         $model=new UserModel();
         $admin=$model->where('role','admin')->first();
         $data['admin']=$admin;
-        session()->set('currentMenu','{Name}');
+        $data['currentMenu']='{Name}';
         $model=new {ModelClassName}();
         if($id>0){
         $data['CurrentRecord']=$model->where('id',$id)->first();

@@ -15,30 +15,10 @@ $routes->match(['get', 'post'], 'login', 'UserController::login', ["filter" => "
 // Admin routes
 $routes->group("admin", ["filter" => "auth"], function ($routes) {
     $routes->get("/", "AdminController::index");
-    $routes->get('addons','PluginsController::addons');
-    $routes->get("testing", "AdminController::testing");
-    //Admin Routes
-    
-        $routes->get("Test", "TestController::index");
-        $routes->post("Test", "TestController::Store");
-        //
-        
-        $routes->get("Links", "LinksController::index");
-        $routes->post("Links", "LinksController::Store");
-        //
-        
-        $routes->get("Post", "PostController::index");
-        $routes->post("Post", "PostController::Store");
-        //
-        
-        $routes->get("Post", "PostController::index");
-        $routes->post("Post", "PostController::Store");
-        //
-        
-        $routes->get("Swapnil", "SwapnilController::index");
-        $routes->post("Swapnil", "SwapnilController::Store");
-        //
-        // {New Admin Routes}
+    $routes->get("userlist", "AdminController::userlist");
+    $routes->get('addons', 'PluginsController::addons');
+    //
+    // {New Admin Routes}
 
     // Settings Routes 
     // {New Admin Settings Routes}
