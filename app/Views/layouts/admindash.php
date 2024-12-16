@@ -23,8 +23,10 @@ $tools = new ToolsController();
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap4.min.css">
-  <link rel="stylesheet" type="text/css" href="<?= base_url('public/assets/backend/mdb5') ?>/vendors/styles/icon-font.min.css">
-  <link rel="stylesheet" type="text/css" href="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" type="text/css"
+    href="<?= base_url('public/assets/backend/mdb5') ?>/vendors/styles/icon-font.min.css">
+  <link rel="stylesheet" type="text/css"
+    href="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/css/responsive.bootstrap4.min.css">
 
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
   <!-- Favicon -->
@@ -72,7 +74,7 @@ $tools = new ToolsController();
 						Section Manager
 					</li>';
           // echo "<p class='text-center text-white border-top border-white'>CRUD Management</p>";
-
+          
           $menu = [];
 
           $menu[''] = [
@@ -81,50 +83,22 @@ $tools = new ToolsController();
             'submenu' => false,
           ];
 
-          $menu['Test'] = [
-            'label' => 'Test',
-            'icon' => 'align-left',
-            'submenu' => false,
-          ];
-          $menu['Links'] = [
-            'label' => 'Links',
-            'icon' => 'align-left',
-            'submenu' => false,
-          ];
-          $menu['Post'] =[
-				        'label'=>'Post',
-				        'icon'=>'align-left',
-				        'submenu'=>false,
-				            ];
-                    $menu['Post'] =[
-				        'label'=>'Post',
-				        'icon'=>'align-left',
-				        'submenu'=>false,
-				            ];
-                    $menu['Swapnil'] =[
-				        'label'=>'Swapnil',
-				        'icon'=>'align-left',
-				        'submenu'=>false,
-				            ];
-                    // {Menu Array}
-                    
-                    
-                    
 
-
-
+          // {Menu Array}
+          
           ksort($menu);
           foreach ($menu as $mk => $mv) {
             // code...
             if ($mv['submenu'] == false) {
               // var_dump($mv);
-          ?>
-              <a href="<?= base_url('admin/' . $mk) ?>" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
+              ?>
+              <a href="<?= base_url('admin/' . $mk) ?>" class="list-group-item list-group-item-action py-2 ripple"
+                aria-current="true">
                 <i class="fas fa-<?= $mv['icon'] ?> fa-fw me-3"></i><span><?= $mv['label'] ?></span>
               </a>
 
             <?php } else {
-            ?>
+              ?>
               <li class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle">
                   <span class="micon dw house-1"></span><span class="mtext"><?= $mv['label'] ?></span>
@@ -142,7 +116,7 @@ $tools = new ToolsController();
           $pluginsPath = FCPATH . 'Plugins/';
           $plugins = array_filter(scandir($pluginsPath), function ($item) use ($pluginsPath) {
             return is_dir($pluginsPath . $item) && !in_array($item, ['.', '..']);
-        });
+          });
           foreach ($plugins as $plugin) {
             echo '<a href="' . base_url('addons/' . $plugin) . '" class="list-group-item list-group-item-action py-2 ripple plugin-link"><i class="fas fa-plugin"></i>' . $plugin . '</a>';
           }
@@ -152,7 +126,7 @@ $tools = new ToolsController();
           $settings_menu = [];
 
           // {Settings Menu Array}
-
+          
 
           ksort($settings_menu);
 
@@ -160,12 +134,13 @@ $tools = new ToolsController();
             // code...
             if ($mv['submenu'] == false) { ?>
 
-              <a href="<?= base_url('admin/settings/' . $mk) ?>" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
+              <a href="<?= base_url('admin/settings/' . $mk) ?>" class="list-group-item list-group-item-action py-2 ripple"
+                aria-current="true">
                 <i class="fas fa-<?= $mv['icon'] ?> fa-fw me-3"></i><span><?= $mv['label'] ?></span>
               </a>
 
             <?php } else {
-            ?>
+              ?>
               <li class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle">
                   <span class="micon dw house-1"></span><span class="mtext"><?= $mv['label'] ?></span>
@@ -175,7 +150,7 @@ $tools = new ToolsController();
                   <li><a href="index2.html">Dashboard style 2</a></li>
                 </ul>
               </li>
-          <?php }
+            <?php }
           }
           ?>
         </div>
@@ -188,7 +163,8 @@ $tools = new ToolsController();
       <!-- Container wrapper -->
       <div class="container-fluid">
         <!-- Toggle button -->
-        <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#sidebarMenu"
+          aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
           <i class="fas fa-bars"></i>
         </button>
 
@@ -202,8 +178,10 @@ $tools = new ToolsController();
 
           <!-- Avatar -->
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle hidden-arrow d-flex align-items-center" href="#" id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
-              <img src="<?= base_url('uploads/profile') ?>/<?= session()->get('profile_pic') ?>" class="rounded-circle" height="40" alt="" loading="lazy" />
+            <a class="nav-link dropdown-toggle hidden-arrow d-flex align-items-center" href="#"
+              id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+              <img src="<?= base_url('uploads/profile') ?>/<?= session()->get('profile_pic') ?>" class="rounded-circle"
+                height="40" alt="" loading="lazy" />
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
               <li><a class="dropdown-item" href="<?= base_url('admin/profile') ?>">My profile</a></li>
@@ -243,13 +221,14 @@ $tools = new ToolsController();
             foreach ($allmedia as $media1) {
 
               if ($tools->endsWith($media1['filename'], $needle) || $tools->endsWith($media1['filename'], $needle2)) {
-            ?>
+                ?>
                 <?= $media1['title'] ?>
                 <audio style="width:150px;height:25px;" controls>
                   <source src="<?= base_url('uploads/medias/' . $media1['filename']) ?>" type="audio/mpeg">
                   Your browser does not support the audio element.
                 </audio>
-                <span id="setlink" onclick="setlink('<?= base_url('uploads/medias/' . $media1['filename']) ?>')">Click To Insert</span>
+                <span id="setlink" onclick="setlink('<?= base_url('uploads/medias/' . $media1['filename']) ?>')">Click To
+                  Insert</span>
               <?php } ?>
             <?php } ?>
           <?php } ?>
@@ -268,13 +247,19 @@ $tools = new ToolsController();
   <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 
 
-  <script src="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/js/jquery.dataTables.min.js"></script>
-  <script src="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
-  <script src="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/js/dataTables.responsive.min.js"></script>
-  <script src="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/js/responsive.bootstrap4.min.js"></script>
+  <script
+    src="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/js/jquery.dataTables.min.js"></script>
+  <script
+    src="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
+  <script
+    src="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/js/dataTables.responsive.min.js"></script>
+  <script
+    src="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/js/responsive.bootstrap4.min.js"></script>
   <!-- buttons for Export datatable -->
-  <script src="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/js/dataTables.buttons.min.js"></script>
-  <script src="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/js/buttons.bootstrap4.min.js"></script>
+  <script
+    src="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/js/dataTables.buttons.min.js"></script>
+  <script
+    src="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/js/buttons.bootstrap4.min.js"></script>
   <script src="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/js/buttons.print.min.js"></script>
   <script src="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/js/buttons.html5.min.js"></script>
   <script src="<?= base_url('public/assets/backend/mdb5') ?>/src/plugins/datatables/js/buttons.flash.min.js"></script>
@@ -310,11 +295,11 @@ $tools = new ToolsController();
     $('.select2').select2();
 
     var title = document.getElementById('title');
-    if (typeof(title) != 'undefined' && title != null) {
+    if (typeof (title) != 'undefined' && title != null) {
       console.log('title found');
       var slug = document.getElementById('slug');
-      if (typeof(slug) != 'undefined' && slug != null) {
-        title.addEventListener("keyup", function(e) {
+      if (typeof (slug) != 'undefined' && slug != null) {
+        title.addEventListener("keyup", function (e) {
           // title.keyup(function(){
 
           // var title=$('#title').val();
@@ -339,13 +324,13 @@ $tools = new ToolsController();
     }
   </script>
   <script>
-    setTimeout(function() {
+    setTimeout(function () {
       $('.alert').fadeOut('slow');
     }, 10000);
 
 
 
-    $('.close').on('click', function(event) {
+    $('.close').on('click', function (event) {
       $('.alert').fadeOut('slow');
     });
 
@@ -370,7 +355,7 @@ $tools = new ToolsController();
       $('#exampleModal').modal('toggle');
     }
 
-    $('#exampleModal').on('show.bs.modal', function(event) {
+    $('#exampleModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget) // Button that triggered the modal
       //   var getID = button.data('id')
       //   var getAdd = button.data('adress')
