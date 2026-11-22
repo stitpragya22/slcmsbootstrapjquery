@@ -257,6 +257,7 @@
                     <li class="nav-item"><a class="nav-link px-2" href="#security">Shield Auth</a></li>
                     <li class="nav-item"><a class="nav-link px-2 text-primary fw-bold" href="<?= base_url('marketplace') ?>"><i class="fas fa-store me-1"></i>Marketplace</a></li>
                     <li class="nav-item"><a class="nav-link px-2 text-success fw-bold" href="<?= base_url('docs') ?>"><i class="fas fa-book me-1"></i>Developer Docs</a></li>
+                    <li class="nav-item"><a class="nav-link px-2 text-info fw-bold" href="<?= base_url('starter') ?>"><i class="fas fa-cubes me-1"></i>UI Starter</a></li>
                     <li class="nav-item"><a class="nav-link px-2" href="#demo">Live Demo</a></li>
                 </ul>
                 <div class="d-flex align-items-center">

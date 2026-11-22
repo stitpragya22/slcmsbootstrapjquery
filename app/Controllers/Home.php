@@ -47,6 +47,55 @@ class Home extends BaseController
     }
 
     /**
+     * Single Plugin Detailed Documentation & Showcase Page
+     */
+    public function marketplaceDetail(string $slug)
+    {
+        $pluginManager = new PluginManager();
+        $plugin = $pluginManager->getPluginDetails($slug);
+
+        if (!$plugin) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Plugin '{$slug}' not found.");
+        }
+
+        $data = [
+            'plugin'      => $plugin,
+            'currentUser' => auth()->loggedIn() ? auth()->user() : null,
+        ];
+
+        return view('marketplace/detail', $data);
+    }
+
+    /**
+     * Developer Profile & Plugin Portfolio Page
+     */
+    public function marketplaceDeveloper(string $authorSlug)
+    {
+        $pluginManager = new PluginManager();
+        $portfolio = $pluginManager->getPluginsByAuthor($authorSlug);
+
+        $data = [
+            'author'      => $portfolio['author'],
+            'plugins'     => $portfolio['plugins'],
+            'currentUser' => auth()->loggedIn() ? auth()->user() : null,
+        ];
+
+        return view('marketplace/developer', $data);
+    }
+
+    /**
+     * Mini Frontend UI Starter Template Demo
+     */
+    public function starter()
+    {
+        $data = [
+            'currentUser' => auth()->loggedIn() ? auth()->user() : null,
+        ];
+
+        return view('starter', $data);
+    }
+
+    /**
      * Developer Documentation Portal
      */
     public function docs()

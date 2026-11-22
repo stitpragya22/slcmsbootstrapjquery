@@ -351,6 +351,105 @@ class PluginManager
         return $catalog;
     }
 
+    /**
+     * Get detailed information for a single plugin
+     */
+    public function getPluginDetails(string $slug): ?array
+    {
+        $catalog = $this->getMarketplaceCatalog();
+        $matched = null;
+
+        foreach ($catalog as $item) {
+            if ($item['slug'] === $slug) {
+                $matched = $item;
+                break;
+            }
+        }
+
+        // If not in standard catalog, scan file system
+        if (!$matched) {
+            $dir = is_dir(ROOTPATH . 'plugins/' . $slug) ? ROOTPATH . 'plugins/' . $slug : (is_dir(ROOTPATH . 'Plugins/' . $slug) ? ROOTPATH . 'Plugins/' . $slug : null);
+            if ($dir && file_exists($dir . '/plugin.json')) {
+                $manifest = json_decode((string) file_get_contents($dir . '/plugin.json'), true);
+                if ($manifest) {
+                    $matched = [
+                        'slug'        => $slug,
+                        'name'        => $manifest['name'] ?? ucfirst($slug),
+                        'version'     => $manifest['version'] ?? '1.0.0',
+                        'description' => $manifest['description'] ?? '',
+                        'author'      => $manifest['author'] ?? 'Community Contributor',
+                        'author_url'  => $manifest['author_url'] ?? '',
+                        'icon'        => $manifest['icon'] ?? 'plug',
+                        'category'    => $manifest['category'] ?? 'Utilities',
+                        'rating'      => 4.8,
+                        'downloads'   => '1,200',
+                        'price'       => 'Free',
+                        'is_installed'=> true,
+                    ];
+                }
+            }
+        }
+
+        if (!$matched) {
+            return null;
+        }
+
+        // Add author slug
+        helper('url');
+        $matched['author_slug'] = url_title($matched['author'], '-', true);
+
+        // Check for local README.md
+        $pluginDir = is_dir(ROOTPATH . 'plugins/' . $slug) ? ROOTPATH . 'plugins/' . $slug : (is_dir(ROOTPATH . 'Plugins/' . $slug) ? ROOTPATH . 'Plugins/' . $slug : null);
+        $readmeContent = null;
+        if ($pluginDir && file_exists($pluginDir . '/README.md')) {
+            $readmeContent = (string) file_get_contents($pluginDir . '/README.md');
+        }
+        $matched['readme'] = $readmeContent;
+
+        // Check active status
+        $matched['is_active'] = self::isActive($slug);
+
+        return $matched;
+    }
+
+    /**
+     * Get all plugins authored by a specific developer
+     */
+    public function getPluginsByAuthor(string $authorSlug): array
+    {
+        helper('url');
+        $catalog = $this->getMarketplaceCatalog();
+        $plugins = [];
+        $authorInfo = [
+            'name'        => '',
+            'slug'        => $authorSlug,
+            'url'         => '',
+            'badge'       => 'Verified Developer',
+            'bio'         => 'Certified creator and core contributor to the SLCMS modular plugin ecosystem.',
+        ];
+
+        foreach ($catalog as $item) {
+            $slugified = url_title($item['author'], '-', true);
+            if ($slugified === $authorSlug || stripos($item['author'], str_replace('-', ' ', $authorSlug)) !== false) {
+                $item['author_slug'] = $slugified;
+                $plugins[] = $item;
+                if (empty($authorInfo['name'])) {
+                    $authorInfo['name'] = $item['author'];
+                    $authorInfo['url']  = $item['author_url'] ?? '';
+                }
+            }
+        }
+
+        if (empty($authorInfo['name'])) {
+            $authorInfo['name'] = ucwords(str_replace('-', ' ', $authorSlug));
+        }
+
+        return [
+            'author'  => $authorInfo,
+            'plugins' => $plugins,
+        ];
+    }
+
     private function executeLifecycle(string $slug, string $method): void
     {
         $safeNs = str_replace(['-', '_'], '', ucwords($slug, '-_'));

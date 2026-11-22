@@ -207,7 +207,11 @@
                                     <i class="fas fa-<?= esc($item['icon']) ?>"></i>
                                 </div>
                                 <div class="flex-grow-1 overflow-hidden">
-                                    <h5 class="fw-bold mb-0 text-dark text-truncate" title="<?= esc($item['name']) ?>"><?= esc($item['name']) ?></h5>
+                                    <h5 class="fw-bold mb-0 text-truncate" title="<?= esc($item['name']) ?>">
+                                        <a href="<?= base_url('marketplace/plugin/' . esc($item['slug'])) ?>" class="text-dark text-decoration-none">
+                                            <?= esc($item['name']) ?>
+                                        </a>
+                                    </h5>
                                     <span class="badge bg-light text-secondary border small"><?= esc($item['category']) ?></span>
                                 </div>
                             </div>
@@ -221,13 +225,14 @@
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted text-truncate me-2">by <a href="<?= esc($item['author_url']) ?>" target="_blank" class="text-decoration-none fw-semibold"><?= esc($item['author']) ?></a></small>
+                                <?php helper('url'); $authorSlug = url_title($item['author'], '-', true); ?>
+                                <small class="text-muted text-truncate me-2">by <a href="<?= base_url('marketplace/developer/' . $authorSlug) ?>" class="text-decoration-none fw-semibold text-primary"><?= esc($item['author']) ?></a></small>
                                 <div class="d-flex gap-2">
-                                    <a href="<?= base_url('marketplace/download/' . $item['slug']) ?>" class="btn btn-sm btn-outline-secondary" title="Download ZIP">
-                                        <i class="fas fa-download"></i>
+                                    <a href="<?= base_url('marketplace/plugin/' . esc($item['slug'])) ?>" class="btn btn-sm btn-outline-primary fw-bold" title="View Full Documentation & Specs">
+                                        Details & Docs
                                     </a>
-                                    <a href="<?= base_url('admin/marketplace/install/' . $item['slug']) ?>" class="btn btn-sm btn-primary">
-                                        <i class="fas fa-plus me-1"></i>Install
+                                    <a href="<?= base_url('marketplace/download/' . esc($item['slug'])) ?>" class="btn btn-sm btn-outline-secondary" title="Download ZIP">
+                                        <i class="fas fa-download"></i>
                                     </a>
                                 </div>
                             </div>

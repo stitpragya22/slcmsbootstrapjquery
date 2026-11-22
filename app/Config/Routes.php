@@ -7,8 +7,11 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 $routes->get('marketplace', 'Home::marketplace');
+$routes->get('marketplace/plugin/(:segment)', 'Home::marketplaceDetail/$1');
+$routes->get('marketplace/developer/(:any)', 'Home::marketplaceDeveloper/$1');
 $routes->get('marketplace/download/(:segment)', 'Home::marketplaceDownload/$1');
 $routes->get('docs', 'Home::docs');
+$routes->get('starter', 'Home::starter');
 
 // Shield Authentication Routes
 service('auth')->routes($routes);
