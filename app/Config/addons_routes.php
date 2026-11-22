@@ -8,8 +8,8 @@ $routes->group('addons', function ($routes) {
     });
 
     $routes->match(['get', 'post'], '(:segment)/(:segment)', function ($pluginName, $method = 'index') {
-        // 1. Sanitize plugin name and method to prevent directory traversal and injection
-        if (!preg_match('/^[a-zA-Z0-9_]+$/', $pluginName) || !preg_match('/^[a-zA-Z0-9_]+$/', $method)) {
+        // 1. Sanitize plugin name and method (allow letters, numbers, underscores, and hyphens)
+        if (!preg_match('/^[a-zA-Z0-9_-]+$/', $pluginName) || !preg_match('/^[a-zA-Z0-9_]+$/', $method)) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound('Invalid plugin or method identifier.');
         }
 
@@ -18,36 +18,78 @@ $routes->group('addons', function ($routes) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound('Access to internal method is prohibited.');
         }
 
-        // 3. Check controller location in safe plugins directory (or legacy FCPATH if exists)
-        $pluginBasePath = is_dir(ROOTPATH . 'plugins/' . $pluginName) 
-            ? ROOTPATH . 'plugins/' . $pluginName 
-            : FCPATH . 'Plugins/' . $pluginName;
+        // 3. Resolve plugin path case-insensitively across plugins and Plugins
+        $pluginBasePath = is_dir(ROOTPATH . 'plugins/' . $pluginName)
+            ? ROOTPATH . 'plugins/' . $pluginName
+            : (is_dir(ROOTPATH . 'Plugins/' . $pluginName) ? ROOTPATH . 'Plugins/' . $pluginName : FCPATH . 'Plugins/' . $pluginName);
 
-        $controllerFile = $pluginBasePath . DIRECTORY_SEPARATOR . $pluginName . 'Controller.php';
-        $activeFile     = $pluginBasePath . DIRECTORY_SEPARATOR . '.active';
-
-        if (!file_exists($controllerFile)) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Plugin '{$pluginName}' controller not found.");
+        if (!is_dir($pluginBasePath)) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Plugin directory '{$pluginName}' not found.");
         }
 
-        if (!file_exists($activeFile) || trim((string) file_get_contents($activeFile)) !== '1') {
-            throw new \RuntimeException("Plugin '{$pluginName}' is currently inactive.");
-        }
+        $studly = str_replace(['-', '_'], '', ucwords($pluginName, '-_'));
 
-        $controllerNamespace = 'Plugins\\' . $pluginName . '\\' . $pluginName . 'Controller';
+        // Check controller file candidates
+        $candidates = [
+            $pluginBasePath . DIRECTORY_SEPARATOR . $studly . 'Controller.php',
+            $pluginBasePath . DIRECTORY_SEPARATOR . $pluginName . 'Controller.php',
+        ];
 
-        if (!class_exists($controllerNamespace)) {
-            if (file_exists($controllerFile)) {
-                require_once $controllerFile;
+        $controllerFile = null;
+        foreach ($candidates as $c) {
+            if (file_exists($c)) {
+                $controllerFile = $c;
+                break;
             }
         }
 
-        if (!class_exists($controllerNamespace)) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Plugin class '{$controllerNamespace}' not found.");
+        if (!$controllerFile) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Plugin controller not found for '{$pluginName}'.");
         }
 
-        $request = service('request');
-        $controller = new $controllerNamespace($request);
+        // Check active status in database or .active file
+        $activeFile = $pluginBasePath . DIRECTORY_SEPARATOR . '.active';
+        $isActive = false;
+
+        try {
+            $db = \Config\Database::connect();
+            if ($db->tableExists('cms_plugins')) {
+                $row = $db->table('cms_plugins')->where('slug', $pluginName)->get()->getRowArray();
+                if ($row && (int) $row['is_active'] === 1) {
+                    $isActive = true;
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        if (!$isActive && file_exists($activeFile) && trim((string) file_get_contents($activeFile)) === '1') {
+            $isActive = true;
+        }
+
+        if (!$isActive) {
+            throw new \RuntimeException("Plugin '{$pluginName}' is currently inactive.");
+        }
+
+        // Namespace candidates
+        $nsCandidates = [
+            'Plugins\\' . $studly . '\\' . $studly . 'Controller',
+            'Plugins\\' . $pluginName . '\\' . $pluginName . 'Controller',
+        ];
+
+        $controllerClass = null;
+        require_once $controllerFile;
+
+        foreach ($nsCandidates as $ns) {
+            if (class_exists($ns)) {
+                $controllerClass = $ns;
+                break;
+            }
+        }
+
+        if (!$controllerClass) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Plugin controller class could not be resolved for '{$pluginName}'.");
+        }
+
+        $controller = new $controllerClass();
 
         if (!is_callable([$controller, $method])) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Method '{$method}' not found in plugin.");
