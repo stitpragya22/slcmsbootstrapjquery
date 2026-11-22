@@ -1,0 +1,15 @@
+{
+  "slug": "seo-optimizer",
+  "name": "SEO Master & Sitemap Generator",
+  "version": "1.2.0",
+  "description": "Automatic dynamic XML sitemap generation, robots.txt manager, and OpenGraph social meta tags for SLCMS.",
+  "author": "Stitpragya Technologies",
+  "author_url": "https://stitpragya.in",
+  "icon": "search",
+  "category": "SEO & Marketing",
+  "menu": {
+    "label": "SEO Master",
+    "icon": "search",
+    "route": "addons/seo-optimizer"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "slug": "contact-form-builder",
+  "name": "Contact Form & Lead Manager",
+  "version": "1.0.5",
+  "description": "Capture visitor inquiries, manage incoming customer leads, and store contact submissions with IP and timestamp logs.",
+  "author": "Stitpragya Technologies",
+  "author_url": "https://stitpragya.in",
+  "icon": "envelope-open-text",
+  "category": "Forms & Leads",
+  "menu": {
+    "label": "Form Inquiries",
+    "icon": "envelope",
+    "route": "addons/contact-form-builder"
+  }
+}

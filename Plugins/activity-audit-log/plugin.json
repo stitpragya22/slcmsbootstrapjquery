@@ -1,0 +1,15 @@
+{
+  "slug": "activity-audit-log",
+  "name": "Enterprise Activity & Audit Logger",
+  "version": "1.1.0",
+  "description": "Comprehensive security audit trail logging administrator, editor, and user activities with IP addresses and change timestamps.",
+  "author": "SLCMS Security Lab",
+  "author_url": "https://slcms.stitpragya.in",
+  "icon": "history",
+  "category": "Security & Auditing",
+  "menu": {
+    "label": "Audit Logs",
+    "icon": "history",
+    "route": "addons/activity-audit-log"
+  }
+}

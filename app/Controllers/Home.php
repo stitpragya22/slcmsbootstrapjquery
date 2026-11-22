@@ -2,7 +2,8 @@
 
 namespace App\Controllers;
 
-use App\Models\CmsModuleModel;
+use App\Libraries\PluginManager;
+use ZipArchive;
 
 class Home extends BaseController
 {
@@ -19,9 +20,7 @@ class Home extends BaseController
                     ->get()
                     ->getResultArray();
             }
-        } catch (\Throwable $e) {
-            // Graceful fallback
-        }
+        } catch (\Throwable $e) {}
 
         $data = [
             'modules'     => $modules,
@@ -29,5 +28,59 @@ class Home extends BaseController
         ];
 
         return view('landing', $data);
+    }
+
+    /**
+     * Public WordPress.org-style Plugin Marketplace Directory
+     */
+    public function marketplace()
+    {
+        $pluginManager = new PluginManager();
+        $catalog = $pluginManager->getMarketplaceCatalog();
+
+        $data = [
+            'catalog'     => $catalog,
+            'currentUser' => auth()->loggedIn() ? auth()->user() : null,
+        ];
+
+        return view('marketplace/index', $data);
+    }
+
+    /**
+     * Download Plugin as a .ZIP archive directly from the public marketplace
+     */
+    public function marketplaceDownload(string $slug)
+    {
+        $slug = preg_replace('/[^a-zA-Z0-9_-]/', '', $slug);
+        $pluginPath = ROOTPATH . 'plugins/' . $slug;
+
+        if (!is_dir($pluginPath)) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Plugin '{$slug}' not found.");
+        }
+
+        $zipFile = WRITEPATH . 'cache/' . $slug . '-v1.0.0.zip';
+        $zip = new ZipArchive();
+
+        if ($zip->open($zipFile, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+            $files = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($pluginPath, \RecursiveDirectoryIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::LEAVES_ONLY
+            );
+
+            foreach ($files as $file) {
+                if (!$file->isDir()) {
+                    $filePath = $file->getRealPath();
+                    $relativePath = $slug . '/' . substr($filePath, strlen($pluginPath) + 1);
+                    $zip->addFile($filePath, $relativePath);
+                }
+            }
+            $zip->close();
+        }
+
+        if (file_exists($zipFile)) {
+            return $this->response->download($zipFile, null)->setFileName($slug . '.zip');
+        }
+
+        return redirect()->to(base_url('marketplace'));
     }
 }

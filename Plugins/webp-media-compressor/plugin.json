@@ -1,0 +1,15 @@
+{
+  "slug": "webp-media-compressor",
+  "name": "WebP Auto-Compressor & Optimizer",
+  "version": "1.0.0",
+  "description": "Scans uploaded images, displays file sizes, and converts standard JPG/PNG images to modern high-efficiency WebP format.",
+  "author": "Community Contributor",
+  "author_url": "https://stitpragya.in",
+  "icon": "image",
+  "category": "Media & Storage",
+  "menu": {
+    "label": "WebP Optimizer",
+    "icon": "image",
+    "route": "addons/webp-media-compressor"
+  }
+}
