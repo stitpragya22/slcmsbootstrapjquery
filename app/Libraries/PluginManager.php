@@ -352,6 +352,31 @@ class PluginManager
     }
 
     /**
+     * Check if a plugin is currently active
+     */
+    public static function isActive(string $slug): bool
+    {
+        try {
+            $db = \Config\Database::connect();
+            if ($db->tableExists('cms_plugins')) {
+                $row = $db->table('cms_plugins')->where('slug', $slug)->get()->getRowArray();
+                if ($row && (int) $row['is_active'] === 1) {
+                    return true;
+                }
+            }
+        } catch (\Throwable $e) {}
+
+        $dir1 = ROOTPATH . 'plugins/' . $slug . '/.active';
+        $dir2 = ROOTPATH . 'Plugins/' . $slug . '/.active';
+        if ((file_exists($dir1) && trim((string) file_get_contents($dir1)) === '1') ||
+            (file_exists($dir2) && trim((string) file_get_contents($dir2)) === '1')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Get detailed information for a single plugin
      */
     public function getPluginDetails(string $slug): ?array

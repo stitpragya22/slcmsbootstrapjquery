@@ -48,24 +48,7 @@ $routes->group('addons', function ($routes) {
         }
 
         // Check active status in database or .active file
-        $activeFile = $pluginBasePath . DIRECTORY_SEPARATOR . '.active';
-        $isActive = false;
-
-        try {
-            $db = \Config\Database::connect();
-            if ($db->tableExists('cms_plugins')) {
-                $row = $db->table('cms_plugins')->where('slug', $pluginName)->get()->getRowArray();
-                if ($row && (int) $row['is_active'] === 1) {
-                    $isActive = true;
-                }
-            }
-        } catch (\Throwable $e) {}
-
-        if (!$isActive && file_exists($activeFile) && trim((string) file_get_contents($activeFile)) === '1') {
-            $isActive = true;
-        }
-
-        if (!$isActive) {
+        if (!\App\Libraries\PluginManager::isActive($pluginName)) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Plugin '{$pluginName}' is currently inactive.");
         }
 
