@@ -349,15 +349,19 @@ class PluginManager
 
     private function executeLifecycle(string $slug, string $method): void
     {
-        $class = 'Plugins\\' . $slug . '\\Plugin';
-        $file = $this->pluginsPath . $slug . '/Plugin.php';
+        $safeNs = str_replace(['-', '_'], '', ucwords($slug, '-_'));
+        $class  = 'Plugins\\' . $safeNs . '\\Plugin';
+        $file   = $this->pluginsPath . $slug . '/Plugin.php';
 
         if (file_exists($file)) {
-            require_once $file;
-        }
-
-        if (class_exists($class) && method_exists($class, $method)) {
-            call_user_func([$class, $method]);
+            try {
+                require_once $file;
+                if (class_exists($class) && method_exists($class, $method)) {
+                    call_user_func([$class, $method]);
+                }
+            } catch (\Throwable $e) {
+                log_message('error', "Plugin lifecycle error in {$slug}::{$method}: " . $e->getMessage());
+            }
         }
     }
 

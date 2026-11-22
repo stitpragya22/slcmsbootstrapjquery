@@ -100,10 +100,11 @@ class MarketplaceController extends BaseAdminController
         file_put_contents($destDir . '/plugin.json', json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
         // Create main Plugin bootstrap file
+        $safeNs = str_replace(['-', '_'], '', ucwords($slug, '-_'));
         $pluginPhp = <<<PHP
 <?php
 
-namespace Plugins\\{$slug};
+namespace Plugins\\{$safeNs};
 
 use App\Libraries\Hook;
 
@@ -117,6 +118,11 @@ class Plugin
     public static function onDeactivate(): void
     {
         log_message('info', 'Plugin {$slug} deactivated.');
+    }
+
+    public static function onUninstall(): void
+    {
+        log_message('info', 'Plugin {$slug} uninstalled.');
     }
 
     public static function boot(): void
