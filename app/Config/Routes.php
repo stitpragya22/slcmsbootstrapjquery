@@ -23,6 +23,9 @@ $routes->group("admin", ["filter" => "group:admin,superadmin"], function ($route
     $routes->post("updateprofile", "AdminController::UpdateProfile");
     $routes->post("updatepassword", "AdminController::UpdatePassword");
     $routes->get('addons', 'PluginsController::addons');
+    $routes->get('plugins', 'PluginsController::addons');
+    $routes->get('plugins/activate/(:segment)', 'PluginsController::activate/$1');
+    $routes->get('plugins/deactivate/(:segment)', 'PluginsController::deactivate/$1');
 
     // CRUD Generator Routes
     $routes->get("generator", "Generator::index");

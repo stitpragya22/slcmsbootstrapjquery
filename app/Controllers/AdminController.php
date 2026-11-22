@@ -1,155 +1,137 @@
 <?php
 
 namespace App\Controllers;
+
 use App\Models\UserModel;
+use App\Controllers\Admin\BaseAdminController;
 
-use App\Controllers\BaseController;
-
-class AdminController extends BaseController
+class AdminController extends BaseAdminController
 {
-    public function __construct()
-    {
-        // Shield route filter group:admin,superadmin ensures authorized access
-    }
     public function index()
     {
-        $data['bread']='';
-        $data['currentMenu']='';
-        return view("admin/dashboard",$data);
+        $data['bread'] = '';
+        $data['currentMenu'] = '';
+        $data['user'] = $this->currentUser;
+        return view("admin/dashboard", $data);
     }
-    
+
     public function userlist()
     {
-        $data['bread']='userlist';
-        $model= new UserModel();
-        $data['records']=$model->where('role','editor')->findAll();
-        // dd($data);
-        return view("admin/userlist",$data);
+        $data['bread'] = 'userlist';
+        $data['user'] = $this->currentUser;
+        $model = new UserModel();
+        $data['records'] = $model->where('role', 'editor')->findAll();
+        return view("admin/userlist", $data);
     }
-    
+
     public function profile()
     {
-        $model=new UserModel();
-        $admin=$model->where('role','admin')->first();
-        $data['admin']=$admin;
-        $data['bread']='Profile';
-        return view("admin/profile",$data);
+        $user = auth()->user();
+        $model = new UserModel();
+        $admin = null;
+        try {
+            $admin = $model->where('role', 'admin')->first();
+        } catch (\Throwable $e) {}
+
+        $data['admin'] = $admin ?: [
+            'name'        => $user ? ($user->username ?? 'Admin') : 'Admin',
+            'first_name'  => $user ? ($user->username ?? 'Admin') : 'Admin',
+            'last_name'   => '',
+            'email'       => $user ? ($user->email ?? 'admin@mail.com') : 'admin@mail.com',
+            'phone_no'    => '',
+            'profile_pic' => '',
+        ];
+        $data['bread'] = 'Profile';
+        $data['user']  = $this->currentUser;
+        return view("admin/profile", $data);
     }
-    
-    public function checkAndUploadImage($file, $target_dir, $size)
-    {
-        $filename = '';
-        if ($file['name'] == null || $file['tmp_name'] == '') {
-            $uploadOk = 0;
-        } else {
-            $uploadOk = 1;
-            $target_file = $target_dir . '/' . basename($file["name"]);
-            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-            $check = getimagesize($file["tmp_name"]);
-            if ($check == false) {
-                $uploadOk = 0;
-            }
-            if ($file["size"] > $size) {
-                $uploadOk = 0;
-                echo "big size";
-            }
-            if (
-                $imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-                && $imageFileType != "gif"
-            ) {
-                $uploadOk = 0;
-            }
-            if ($uploadOk == 1) {
-                $randomletter = substr(str_shuffle("abcdefghijklmnopqrstuvwxyz"), 0, 4);
-                $public_id = $randomletter . '_' . time();
-                $filename = $public_id . '.' . $imageFileType;
-                $target_file = $target_dir . '/' . $filename;
-                if (move_uploaded_file($file["tmp_name"], $target_file)) {
-                    $uploadOk = 1;
-                } else {
-                    $uploadOk = 0;
-                }
-            }
-        }
-        $data['uploadOk'] = $uploadOk;
-        $data['filename'] = $filename;
-        return $data;
-    }
-    
+
     public function UpdateProfile()
     {
-        // dd($_POST);
         session()->setFlashdata("mtype", "warning");
-        $model=new UserModel();
-        $admin=$model->where('role','admin')->first();
-        $data['first_name']=$this->request->getVar('first_name');
-        $data['last_name']=$this->request->getVar('last_name');
-        $data['name']=$data['first_name'].' '.$data['last_name'];
-        $data['email']=$this->request->getVar('email');
-        $data['phone_no']=$this->request->getVar('phone_no');
-        $data['id']=$admin['id'];
-        foreach ($data as $key => $val)
-        {
-            if($val=="")
-            {session()->setFlashdata("message", "The ".$key." is Must ..");
-            return redirect()->back()->withInput();}
+        $user = auth()->user();
+        $model = new UserModel();
+        $admin = null;
+        try {
+            $admin = $model->where('role', 'admin')->first();
+        } catch (\Throwable $e) {}
+
+        $firstName = trim((string) $this->request->getPost('first_name'));
+        $lastName  = trim((string) $this->request->getPost('last_name'));
+        $email     = trim((string) $this->request->getPost('email'));
+        $phone     = trim((string) $this->request->getPost('phone_no'));
+
+        if (empty($firstName) || empty($email)) {
+            session()->setFlashdata("message", "First name and email are required.");
+            return redirect()->back()->withInput();
         }
-        
-        $target_dir="uploads/profile";
-            $size=500000*100;
-            $file=$_FILES['profile_pic'];
-            $uploadResult=$this->checkAndUploadImage($file, $target_dir, $size);
-            $uploadOk=$uploadResult['uploadOk'];
-            if($uploadOk==1){
-                $data['profile_pic']=$uploadResult['filename'];
-                session()->set('profile_pic',$uploadResult['filename']);
+
+        // Upload Profile Picture
+        $profilePic = $this->uploadImage('profile_pic', 'profile');
+
+        // Update Shield User if email changed
+        if ($user && $email !== $user->email) {
+            $user->fill(['email' => $email]);
+            auth()->getProvider()->save($user);
+        }
+
+        // Update legacy UserModel for compatibility
+        try {
+            $data = [
+                'first_name' => $firstName,
+                'last_name'  => $lastName,
+                'name'       => trim($firstName . ' ' . $lastName),
+                'email'      => $email,
+                'phone_no'   => $phone,
+            ];
+            if ($profilePic) {
+                $data['profile_pic'] = $profilePic;
+                session()->set('profile_pic', $profilePic);
             }
-            else{
-                // if($id==0)
-                // {
-                //     session()->setFlashdata("message", "The thumbnail is Must For New BlogCategory ");
-                //      return redirect()->back()->withInput();
-                // }
-                // else{
-                    if(($_FILES['profile_pic']['tmp_name'])!="")
-                    {
-                        
-                    session()->setFlashdata("message", "The profile_pic is Invalid");
-                     return redirect()->back()->withInput();
-                    }
-                // }
+            if ($admin) {
+                $model->update($admin['id'], $data);
             }
-            
-        $model->save($data);
+        } catch (\Throwable $e) {}
+
         session()->setFlashdata("mtype", "success");
-        session()->setFlashdata("message", "Profile Stored Successfully!");
+        session()->setFlashdata("message", "Profile updated successfully!");
         return redirect()->to(base_url('/admin/profile'));
     }
-    
+
     public function UpdatePassword()
     {
         session()->setFlashdata("mtype", "warning");
-        $model=new UserModel();
-        $admin=$model->where('role','admin')->first();
-        $data['password']=$this->request->getVar('password');
-        $data['cpassword']=$this->request->getVar('cpassword');
-        $data['id']=$admin['id'];
-        foreach ($data as $key => $val)
-        {
-            if($val=="")
-            {session()->setFlashdata("message", "The ".$key." is Must ..");
-            return redirect()->back()->withInput();}
-            if($data['cpassword']!=$data['password'])
-            {session()->setFlashdata("message", "The Password And Confirm Password Must Be Same ..");
-            return redirect()->back()->withInput();}
+        $password = (string) $this->request->getPost('password');
+        $cpassword = (string) $this->request->getPost('cpassword');
+
+        if (strlen($password) < 8) {
+            session()->setFlashdata("message", "Password must be at least 8 characters long.");
+            return redirect()->back()->withInput();
         }
-        
-        unset($data['cpassword']);
-        // Now No error continue with encryption of password 
-        $data['password']=password_hash($data['password'], PASSWORD_DEFAULT);
-        $model->save($data);
+
+        if ($password !== $cpassword) {
+            session()->setFlashdata("message", "The Password and Confirm Password must match.");
+            return redirect()->back()->withInput();
+        }
+
+        // 1. Update Shield authenticated user
+        $user = auth()->user();
+        if ($user) {
+            $user->fill(['password' => $password]);
+            auth()->getProvider()->save($user);
+        }
+
+        // 2. Also update legacy user table for backward compatibility
+        try {
+            $model = new UserModel();
+            $admin = $model->where('role', 'admin')->first();
+            if ($admin) {
+                $model->update($admin['id'], ['password' => password_hash($password, PASSWORD_DEFAULT)]);
+            }
+        } catch (\Throwable $e) {}
+
         session()->setFlashdata("mtype", "success");
-        session()->setFlashdata("message", "Password Changed Successfully!");
+        session()->setFlashdata("message", "Password changed successfully in Shield!");
         return redirect()->to(base_url('/admin/profile'));
     }
 }

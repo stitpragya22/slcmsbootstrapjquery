@@ -86,8 +86,9 @@ class Routing extends BaseRouting
      * defined routes.
      *
      * If FALSE, will stop searching and do NO automatic routing.
+     * SECURITY: Disabled to prevent unauthorized method execution and filter bypass.
      */
-    public bool $autoRoute = true;
+    public bool $autoRoute = false;
 
     /**
      * If TRUE, will enable the use of the 'prioritize' option

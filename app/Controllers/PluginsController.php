@@ -2,40 +2,46 @@
 
 namespace App\Controllers;
 
-use CodeIgniter\Controller;
+use App\Controllers\Admin\BaseAdminController;
 
-class PluginsController extends Controller
+class PluginsController extends BaseAdminController
 {
-    public function __construct()
+    private function getPluginBasePath(): string
     {
-        if (session()->get('role') != "admin") {
-            echo 'Access denied';
-            exit;
+        $dir = ROOTPATH . 'plugins/';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
         }
+        return $dir;
     }
-    // In your Plugins controller
 
-    public function getPlugins()
+    public function getPlugins(): array
     {
-        $pluginsPath = FCPATH . 'Plugins/';
+        $pluginsPath = $this->getPluginBasePath();
         $plugins = array_filter(scandir($pluginsPath), function ($item) use ($pluginsPath) {
-            return is_dir($pluginsPath . $item) && !in_array($item, ['.', '..']);
+            return is_dir($pluginsPath . $item) && !in_array($item, ['.', '..'], true);
         });
 
         $pluginDetails = [];
         foreach ($plugins as $plugin) {
-            $defaultThumbnailPath = base_url('Plugins/default_thumbnail.jpg');
-            $thumbnailPath = base_url('Plugins/' . $plugin . '/thumbnail.jpg'); // Assuming thumbnail.jpg is the thumbnail image name
-            if (!file_exists($pluginsPath . $plugin . '/thumbnail.jpg')) {
-                $thumbnailPath = $defaultThumbnailPath;
-            }
+            $defaultThumbnail = base_url('assets/backend/mdb5/img/plugin_default.png');
+            $thumbFile = $pluginsPath . $plugin . '/thumbnail.jpg';
+            $thumbnailPath = file_exists($thumbFile) ? base_url('plugins/' . $plugin . '/thumbnail.jpg') : $defaultThumbnail;
+
             $activeFile = $pluginsPath . $plugin . '/.active';
             $isActive = (file_exists($activeFile) && trim(file_get_contents($activeFile)) === '1');
 
+            $manifestFile = $pluginsPath . $plugin . '/plugin.json';
+            $manifest = file_exists($manifestFile) ? json_decode(file_get_contents($manifestFile), true) : [];
+
             $pluginDetails[] = [
-                'name' => $plugin,
-                'thumbnail' => $thumbnailPath,
-                'isActive' => $isActive,
+                'name'        => $manifest['name'] ?? $plugin,
+                'slug'        => $plugin,
+                'description' => $manifest['description'] ?? 'No description provided.',
+                'version'     => $manifest['version'] ?? '1.0.0',
+                'author'      => $manifest['author'] ?? 'Community Developer',
+                'thumbnail'   => $thumbnailPath,
+                'isActive'    => $isActive,
             ];
         }
 
@@ -44,31 +50,55 @@ class PluginsController extends Controller
 
     public function activate($plugin)
     {
-        $activeFile = FCPATH . 'Plugins/' . $plugin . '/.active';
-        if (file_put_contents($activeFile, '1') !== false) {
-            // Plugin activated successfully
-            return redirect()->back()->with('success', 'Plugin activated successfully.');
-        } else {
-            // Error activating plugin
-            return redirect()->back()->with('error', 'Error activating plugin.');
+        $plugin = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $plugin);
+        $pluginsPath = $this->getPluginBasePath();
+        $targetDir = $pluginsPath . $plugin;
+
+        if (!is_dir($targetDir)) {
+            $this->flashError("Plugin '{$plugin}' not found.");
+            return redirect()->to(base_url('admin/plugins'));
         }
+
+        $activeFile = $targetDir . '/.active';
+        if (file_put_contents($activeFile, '1') !== false) {
+            $this->flashSuccess("Plugin '{$plugin}' activated successfully.");
+        } else {
+            $this->flashError("Failed to activate plugin '{$plugin}'.");
+        }
+
+        return redirect()->to(base_url('admin/plugins'));
     }
 
     public function deactivate($plugin)
     {
-        $activeFile = FCPATH . 'Plugins/' . $plugin . '/.active';
-        if (file_put_contents($activeFile, '0') !== false) {
-            // Plugin deactivated successfully
-            return redirect()->back()->with('success', 'Plugin deactivated successfully.');
-        } else {
-            // Error deactivating plugin
-            return redirect()->back()->with('error', 'Error deactivating plugin.');
+        $plugin = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $plugin);
+        $pluginsPath = $this->getPluginBasePath();
+        $targetDir = $pluginsPath . $plugin;
+
+        if (!is_dir($targetDir)) {
+            $this->flashError("Plugin '{$plugin}' not found.");
+            return redirect()->to(base_url('admin/plugins'));
         }
+
+        $activeFile = $targetDir . '/.active';
+        if (file_put_contents($activeFile, '0') !== false) {
+            $this->flashSuccess("Plugin '{$plugin}' deactivated successfully.");
+        } else {
+            $this->flashError("Failed to deactivate plugin '{$plugin}'.");
+        }
+
+        return redirect()->to(base_url('admin/plugins'));
     }
 
     public function addons()
     {
-        $data['plugins']=$this->getPlugins();
-        return view("admin/addons",$data);
+        $data = [
+            'plugins'     => $this->getPlugins(),
+            'currentMenu' => 'plugins',
+            'bread'       => 'Installed Plugins & Addons',
+            'user'        => $this->currentUser,
+        ];
+
+        return view('admin/addons', $data);
     }
 }
