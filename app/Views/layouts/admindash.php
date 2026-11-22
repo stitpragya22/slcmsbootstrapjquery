@@ -134,17 +134,13 @@ $tools = new ToolsController();
           <a href="<?= base_url('admin/generator/modules') ?>" class="list-group-item list-group-item-action py-2 ripple">
             <i class="fas fa-cubes fa-fw me-3 text-primary"></i><span>Manage Modules</span>
           </a>
+          <a href="<?= base_url('admin/marketplace') ?>" class="list-group-item list-group-item-action py-2 ripple">
+            <i class="fas fa-store fa-fw me-3 text-warning"></i><span>Plugin Marketplace</span>
+          </a>
+          <a href="<?= base_url('admin/plugins') ?>" class="list-group-item list-group-item-action py-2 ripple">
+            <i class="fas fa-plug fa-fw me-3 text-info"></i><span>Installed Addons</span>
+          </a>
           <?php
-          // Add the Plugins section
-          echo '<li class="sidebar-header font-weight-bold">Plugins</li>';
-          // Dynamically generate links for each plugin
-          $pluginsPath = FCPATH . 'Plugins/';
-          $plugins = array_filter(scandir($pluginsPath), function ($item) use ($pluginsPath) {
-            return is_dir($pluginsPath . $item) && !in_array($item, ['.', '..']);
-          });
-          foreach ($plugins as $plugin) {
-            echo '<a href="' . base_url('addons/' . $plugin) . '" class="list-group-item list-group-item-action py-2 ripple plugin-link"><i class="fas fa-plugin"></i>' . $plugin . '</a>';
-          }
           echo '<li class="sidebar-header font-weight-bold">
 						Other Settings
 					</li>';

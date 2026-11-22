@@ -1,0 +1,10 @@
+{
+  "slug": "HelloWorldPlugin",
+  "name": "Hello World Demo Plugin",
+  "version": "1.0.0",
+  "description": "Showcase plugin demonstrating the SLCMS marketplace architecture, hooks, and dynamic route dispatching.",
+  "author": "Stitpragya Technologies",
+  "author_url": "https://stitpragya.in",
+  "icon": "globe",
+  "category": "Utilities"
+}

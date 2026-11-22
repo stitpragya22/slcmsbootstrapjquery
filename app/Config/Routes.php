@@ -27,6 +27,14 @@ $routes->group("admin", ["filter" => "group:admin,superadmin"], function ($route
     $routes->get('plugins/activate/(:segment)', 'PluginsController::activate/$1');
     $routes->get('plugins/deactivate/(:segment)', 'PluginsController::deactivate/$1');
 
+    // Plugin Marketplace Routes
+    $routes->get('marketplace', 'MarketplaceController::index');
+    $routes->post('marketplace/upload', 'MarketplaceController::uploadZip');
+    $routes->get('marketplace/install/(:segment)', 'MarketplaceController::install/$1');
+    $routes->get('marketplace/activate/(:segment)', 'MarketplaceController::activate/$1');
+    $routes->get('marketplace/deactivate/(:segment)', 'MarketplaceController::deactivate/$1');
+    $routes->get('marketplace/uninstall/(:segment)', 'MarketplaceController::uninstall/$1');
+
     // CRUD Generator Routes
     $routes->get("generator", "Generator::index");
     $routes->get("generator/modules", "Generator::modules");

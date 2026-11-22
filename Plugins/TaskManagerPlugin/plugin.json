@@ -1,0 +1,10 @@
+{
+  "slug": "TaskManagerPlugin",
+  "name": "Task Manager & Workflow Plugin",
+  "version": "1.1.0",
+  "description": "Create, assign, and track team tasks and administrative workflows with priority tags.",
+  "author": "Stitpragya Technologies",
+  "author_url": "https://stitpragya.in",
+  "icon": "tasks",
+  "category": "Project Management"
+}
