@@ -255,7 +255,7 @@
                     <li class="nav-item"><a class="nav-link px-3" href="#features">Features</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#generator">CRUD Generator</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#security">Shield Auth</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#plugins">Plugins</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="#plugins">Marketplace</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#architecture">Architecture</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#demo">Live Demo</a></li>
                 </ul>
@@ -577,9 +577,14 @@
                     <h3 class="fw-bold text-dark mb-1">Active CMS Modules & Plugins</h3>
                     <p class="text-muted small mb-0">Dynamic modules currently registered on the production database</p>
                 </div>
-                <a href="<?= base_url('admin/generator/modules') ?>" class="btn btn-outline-primary btn-sm">
-                    <i class="fas fa-cubes me-1"></i>Manage in Admin
-                </a>
+                <div>
+                    <a href="<?= base_url('admin/marketplace') ?>" class="btn btn-primary btn-sm me-2">
+                        <i class="fas fa-store me-1"></i>Plugin Marketplace
+                    </a>
+                    <a href="<?= base_url('admin/generator/modules') ?>" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-cubes me-1"></i>Manage Modules
+                    </a>
+                </div>
             </div>
 
             <div class="row g-3">
