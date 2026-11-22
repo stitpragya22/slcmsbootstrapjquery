@@ -90,6 +90,13 @@ $routes->group('addons', function ($routes) {
         }
 
         $controller = new $controllerClass();
+        if (method_exists($controller, 'initController')) {
+            $controller->initController(
+                \Config\Services::request(),
+                \Config\Services::response(),
+                \Config\Services::logger()
+            );
+        }
 
         if (!is_callable([$controller, $method])) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Method '{$method}' not found in plugin.");

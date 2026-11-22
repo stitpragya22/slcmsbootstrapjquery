@@ -111,7 +111,8 @@ class SeoOptimizerController extends BaseController
         }
         $xml .= '</urlset>';
 
-        return $this->response->setContentType('application/xml')->setBody($xml);
+        $resp = $this->response ?? \Config\Services::response();
+        return $resp->setContentType('application/xml')->setBody($xml);
     }
 
     public function robots()
@@ -122,6 +123,7 @@ class SeoOptimizerController extends BaseController
         $content .= "Allow: /\n\n";
         $content .= "Sitemap: " . base_url('addons/seo-optimizer/sitemap') . "\n";
 
-        return $this->response->setContentType('text/plain')->setBody($content);
+        $resp = $this->response ?? \Config\Services::response();
+        return $resp->setContentType('text/plain')->setBody($content);
     }
 }
