@@ -13,7 +13,9 @@ class PluginManager
     public function __construct()
     {
         $this->pluginsPath = ROOTPATH . 'plugins/';
-        if (!is_dir($this->pluginsPath)) {
+        if (!is_dir($this->pluginsPath) && is_dir(ROOTPATH . 'Plugins/')) {
+            $this->pluginsPath = ROOTPATH . 'Plugins/';
+        } elseif (!is_dir($this->pluginsPath)) {
             mkdir($this->pluginsPath, 0755, true);
         }
         $this->model = new CmsPluginModel();
@@ -29,7 +31,9 @@ class PluginManager
      */
     public function scanAndSync(): array
     {
-        $dirs = array_filter(glob($this->pluginsPath . '*'), 'is_dir');
+        $dirs1 = glob(ROOTPATH . 'plugins/*', GLOB_ONLYDIR) ?: [];
+        $dirs2 = glob(ROOTPATH . 'Plugins/*', GLOB_ONLYDIR) ?: [];
+        $dirs = array_unique(array_merge($dirs1, $dirs2));
         $installed = [];
 
         foreach ($dirs as $dir) {

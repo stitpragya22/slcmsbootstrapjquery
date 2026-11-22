@@ -52,7 +52,9 @@ class Home extends BaseController
     public function marketplaceDownload(string $slug)
     {
         $slug = preg_replace('/[^a-zA-Z0-9_-]/', '', $slug);
-        $pluginPath = ROOTPATH . 'plugins/' . $slug;
+        $pluginPath = is_dir(ROOTPATH . 'plugins/' . $slug)
+            ? ROOTPATH . 'plugins/' . $slug
+            : ROOTPATH . 'Plugins/' . $slug;
 
         if (!is_dir($pluginPath)) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Plugin '{$slug}' not found.");
