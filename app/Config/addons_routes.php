@@ -66,7 +66,7 @@ $routes->group('addons', function ($routes) {
         }
 
         if (!$isActive) {
-            throw new \RuntimeException("Plugin '{$pluginName}' is currently inactive.");
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Plugin '{$pluginName}' is currently inactive.");
         }
 
         // Namespace candidates
