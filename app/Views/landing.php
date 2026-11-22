@@ -252,12 +252,12 @@
 
             <div class="collapse navbar-collapse" id="navContent">
                 <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link px-3" href="#features">Features</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#generator">CRUD Generator</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#security">Shield Auth</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#plugins">Marketplace</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#architecture">Architecture</a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#demo">Live Demo</a></li>
+                    <li class="nav-item"><a class="nav-link px-2" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link px-2" href="#generator">CRUD Generator</a></li>
+                    <li class="nav-item"><a class="nav-link px-2" href="#security">Shield Auth</a></li>
+                    <li class="nav-item"><a class="nav-link px-2 text-primary fw-bold" href="<?= base_url('marketplace') ?>"><i class="fas fa-store me-1"></i>Marketplace</a></li>
+                    <li class="nav-item"><a class="nav-link px-2 text-success fw-bold" href="<?= base_url('docs') ?>"><i class="fas fa-book me-1"></i>Developer Docs</a></li>
+                    <li class="nav-item"><a class="nav-link px-2" href="#demo">Live Demo</a></li>
                 </ul>
                 <div class="d-flex align-items-center">
                     <?php if ($currentUser) { ?>
@@ -300,11 +300,14 @@
                     </p>
 
                     <div class="d-flex flex-wrap gap-3 mb-4">
-                        <a href="<?= base_url('login') ?>" class="btn btn-primary btn-lg px-4 shadow-sm">
-                            <i class="fas fa-play-circle me-2"></i>Launch Admin Panel
+                        <a href="<?= base_url('marketplace') ?>" class="btn btn-primary btn-lg px-4 shadow-sm">
+                            <i class="fas fa-store me-2"></i>Plugin Marketplace
                         </a>
-                        <a href="#demo" class="btn btn-outline-dark btn-lg px-4">
-                            <i class="fas fa-key me-2"></i>Get Demo Credentials
+                        <a href="<?= base_url('docs') ?>" class="btn btn-outline-success btn-lg px-4">
+                            <i class="fas fa-book me-2"></i>Developer Docs
+                        </a>
+                        <a href="<?= base_url('login') ?>" class="btn btn-outline-dark btn-lg px-4">
+                            <i class="fas fa-play-circle me-2"></i>Admin Login
                         </a>
                         <a href="https://github.com/stitpragya22/slcmsbootstrapjquery.git" target="_blank" class="btn btn-light border btn-lg px-3">
                             <i class="fab fa-github fa-lg"></i>
@@ -400,7 +403,11 @@
                             <i class="fas fa-plug"></i>
                         </div>
                         <h5 class="fw-bold mb-2">Modular Plugin Architecture</h5>
-                        <p class="text-muted small mb-0">Pluggable addon engine supporting dynamic installation and activation. Ready with built-in plugins such as HelloWorldPlugin and TaskManagerPlugin.</p>
+                        <p class="text-muted small mb-2">Pluggable addon engine supporting dynamic installation, activation, and zip streaming. Built with WordPress-style Hook API.</p>
+                        <div class="mt-2">
+                            <a href="<?= base_url('marketplace') ?>" class="small fw-bold text-primary text-decoration-none me-3"><i class="fas fa-store me-1"></i>Browse Marketplace &rarr;</a>
+                            <a href="<?= base_url('docs') ?>#plugin-structure" class="small fw-bold text-success text-decoration-none"><i class="fas fa-code me-1"></i>Plugin SDK Docs &rarr;</a>
+                        </div>
                     </div>
                 </div>
 
@@ -578,11 +585,14 @@
                     <p class="text-muted small mb-0">Dynamic modules currently registered on the production database</p>
                 </div>
                 <div>
-                    <a href="<?= base_url('admin/marketplace') ?>" class="btn btn-primary btn-sm me-2">
-                        <i class="fas fa-store me-1"></i>Plugin Marketplace
+                    <a href="<?= base_url('marketplace') ?>" class="btn btn-primary btn-sm me-2">
+                        <i class="fas fa-store me-1"></i>Public Marketplace
                     </a>
-                    <a href="<?= base_url('admin/generator/modules') ?>" class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-cubes me-1"></i>Manage Modules
+                    <a href="<?= base_url('docs') ?>" class="btn btn-outline-success btn-sm me-2">
+                        <i class="fas fa-book me-1"></i>Developer Docs
+                    </a>
+                    <a href="<?= base_url('admin/marketplace') ?>" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-cogs me-1"></i>Manage Plugins
                     </a>
                 </div>
             </div>
@@ -653,7 +663,14 @@
             <div class="row gy-4 align-items-center">
                 <div class="col-md-6 text-center text-md-start">
                     <h5 class="text-white fw-bold mb-1"><i class="fas fa-layer-group text-primary me-2"></i>SLCMS v1</h5>
-                    <p class="small text-muted mb-0">Engineered with CodeIgniter 4, Shield, Bootstrap 5 & jQuery.</p>
+                    <p class="small text-muted mb-2">Engineered with CodeIgniter 4, Shield, Bootstrap 5 & jQuery.</p>
+                    <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-md-start small">
+                        <a href="<?= base_url() ?>" class="text-white-50 text-decoration-none">Home</a>
+                        <a href="<?= base_url('marketplace') ?>" class="text-info text-decoration-none"><i class="fas fa-store me-1"></i>Marketplace</a>
+                        <a href="<?= base_url('docs') ?>" class="text-success text-decoration-none"><i class="fas fa-book me-1"></i>Developer Docs</a>
+                        <a href="<?= base_url('login') ?>" class="text-white-50 text-decoration-none">Admin Login</a>
+                        <a href="https://github.com/stitpragya22/slcmsbootstrapjquery.git" target="_blank" class="text-white-50 text-decoration-none"><i class="fab fa-github me-1"></i>GitHub</a>
+                    </div>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
                     <p class="small text-muted mb-0">

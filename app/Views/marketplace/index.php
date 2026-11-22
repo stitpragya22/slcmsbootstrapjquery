@@ -147,6 +147,7 @@
                 <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link px-3" href="<?= base_url() ?>">Home</a></li>
                     <li class="nav-item"><a class="nav-link px-3 active fw-bold text-primary" href="<?= base_url('marketplace') ?>">Plugins Directory</a></li>
+                    <li class="nav-item"><a class="nav-link px-3 text-success fw-bold" href="<?= base_url('docs') ?>"><i class="fas fa-book me-1"></i>Developer Docs</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#developer-hub">Developer SDK</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#how-it-works">How It Works</a></li>
                 </ul>

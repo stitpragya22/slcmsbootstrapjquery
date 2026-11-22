@@ -47,6 +47,18 @@ class Home extends BaseController
     }
 
     /**
+     * Developer Documentation Portal
+     */
+    public function docs()
+    {
+        $data = [
+            'currentUser' => auth()->loggedIn() ? auth()->user() : null,
+        ];
+
+        return view('docs/index', $data);
+    }
+
+    /**
      * Download Plugin as a .ZIP archive directly from the public marketplace
      */
     public function marketplaceDownload(string $slug)
