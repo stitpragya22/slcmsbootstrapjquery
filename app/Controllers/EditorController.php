@@ -9,10 +9,7 @@ class EditorController extends BaseController
 {
     public function __construct()
     {
-        if (session()->get('role') != "editor") {
-            echo 'Access denied';
-            exit;
-        }
+        // Shield route filter group:editor,admin,superadmin ensures authorized access
     }
     public function index()
     {

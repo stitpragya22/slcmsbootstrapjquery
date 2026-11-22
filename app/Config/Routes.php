@@ -7,13 +7,16 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 
+// Shield Authentication Routes
+service('auth')->routes($routes);
+
 // Addons Routing
 // Include the custom routes for addons
 include APPPATH . 'Config/addons_routes.php';
 
-$routes->match(['get', 'post'], 'login', 'UserController::login', ["filter" => "noauth"]);
+// $routes->match(['get', 'post'], 'login', 'UserController::login', ["filter" => "noauth"]);
 // Admin routes
-$routes->group("admin", ["filter" => "auth"], function ($routes) {
+$routes->group("admin", ["filter" => "group:admin,superadmin"], function ($routes) {
     $routes->get("/", "AdminController::index");
     $routes->get("userlist", "AdminController::userlist");
     $routes->get('addons', 'PluginsController::addons');
@@ -24,7 +27,7 @@ $routes->group("admin", ["filter" => "auth"], function ($routes) {
     // {New Admin Settings Routes}
 });
 // Editor routes
-$routes->group("editor", ["filter" => "auth"], function ($routes) {
+$routes->group("editor", ["filter" => "group:editor,admin,superadmin"], function ($routes) {
     $routes->get("/", "EditorController::index");
 });
-$routes->get('logout', 'UserController::logout');
+// $routes->get('logout', 'UserController::logout');

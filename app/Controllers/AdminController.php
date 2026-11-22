@@ -9,11 +9,7 @@ class AdminController extends BaseController
 {
     public function __construct()
     {
-        
-        if (session()->get('role') != "admin") {
-            echo 'Access denied';
-            exit;
-        }
+        // Shield route filter group:admin,superadmin ensures authorized access
     }
     public function index()
     {
