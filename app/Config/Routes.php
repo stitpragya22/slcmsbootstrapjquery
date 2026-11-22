@@ -19,12 +19,35 @@ include APPPATH . 'Config/addons_routes.php';
 $routes->group("admin", ["filter" => "group:admin,superadmin"], function ($routes) {
     $routes->get("/", "AdminController::index");
     $routes->get("userlist", "AdminController::userlist");
+    $routes->get("profile", "AdminController::profile");
+    $routes->post("updateprofile", "AdminController::UpdateProfile");
+    $routes->post("updatepassword", "AdminController::UpdatePassword");
     $routes->get('addons', 'PluginsController::addons');
-    //
-    // {New Admin Routes}
 
-    // Settings Routes 
-    // {New Admin Settings Routes}
+    // CRUD Generator Routes
+    $routes->get("generator", "Generator::index");
+    $routes->get("generator/modules", "Generator::modules");
+    $routes->post("generator/generate", "Generator::controllergenerate");
+    $routes->get("generator/delete/(:num)", "Generator::deleteModule/$1");
+
+    // Dynamic CMS Module Routes (Zero File Mutation)
+    try {
+        $db = \Config\Database::connect();
+        if ($db->tableExists('cms_modules')) {
+            $modules = $db->table('cms_modules')->where('is_active', 1)->get()->getResultArray();
+            foreach ($modules as $mod) {
+                $slug = $mod['slug'];
+                $ctrl = $mod['controller'];
+                $routes->get($slug, "{$ctrl}::index");
+                $routes->get("{$slug}/(:num)", "{$ctrl}::index/$1");
+                $routes->post("{$slug}/store", "{$ctrl}::Store");
+                $routes->post("{$slug}", "{$ctrl}::Store");
+                $routes->get("{$slug}/delete/(:num)", "{$ctrl}::delete/$1");
+            }
+        }
+    } catch (\Throwable $e) {
+        // Safe fallback if database table not yet created
+    }
 });
 // Editor routes
 $routes->group("editor", ["filter" => "group:editor,admin,superadmin"], function ($routes) {

@@ -79,18 +79,33 @@ $tools = new ToolsController();
 
           $menu[''] = [
             'label' => 'Dashboard',
-            'icon' => 'align-left',
+            'icon' => 'tachometer-alt',
             'submenu' => false,
           ];
 
+          // Dynamically Load Registered CMS Modules (Zero File Mutation)
+          try {
+            $db = \Config\Database::connect();
+            if ($db->tableExists('cms_modules')) {
+              $cmsMods = $db->table('cms_modules')
+                ->where('is_active', 1)
+                ->where('in_menu', 1)
+                ->orderBy('sort_order', 'ASC')
+                ->orderBy('name', 'ASC')
+                ->get()
+                ->getResultArray();
+              foreach ($cmsMods as $cMod) {
+                $menu[$cMod['slug']] = [
+                  'label' => $cMod['name'],
+                  'icon'  => $cMod['icon'] ?: 'folder',
+                  'submenu' => false,
+                ];
+              }
+            }
+          } catch (\Throwable $e) {}
 
-          // {Menu Array}
-          
-          ksort($menu);
           foreach ($menu as $mk => $mv) {
-            // code...
             if ($mv['submenu'] == false) {
-              // var_dump($mv);
               ?>
               <a href="<?= base_url('admin/' . $mk) ?>" class="list-group-item list-group-item-action py-2 ripple"
                 aria-current="true">
@@ -110,6 +125,16 @@ $tools = new ToolsController();
               </li>
             <?php }
           }
+
+          echo '<li class="sidebar-header font-weight-bold">Developer Tools</li>';
+          ?>
+          <a href="<?= base_url('admin/generator') ?>" class="list-group-item list-group-item-action py-2 ripple">
+            <i class="fas fa-magic fa-fw me-3 text-primary"></i><span>CRUD Generator</span>
+          </a>
+          <a href="<?= base_url('admin/generator/modules') ?>" class="list-group-item list-group-item-action py-2 ripple">
+            <i class="fas fa-cubes fa-fw me-3 text-primary"></i><span>Manage Modules</span>
+          </a>
+          <?php
           // Add the Plugins section
           echo '<li class="sidebar-header font-weight-bold">Plugins</li>';
           // Dynamically generate links for each plugin

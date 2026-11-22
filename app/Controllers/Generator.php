@@ -1,701 +1,439 @@
 <?php
 
 namespace App\Controllers;
-use App\Controllers\FontAwaysome;
-class Generator extends BaseController
+
+use App\Controllers\Admin\BaseAdminController;
+use App\Models\CmsModuleModel;
+
+class Generator extends BaseAdminController
 {
-    public $name="";
-    public $icon="";
-    public $Path="";
-    public $fixedSelects;
-    public $dbSelects;
-    public $fields;
     public function index()
     {
-        $faicons=FontAwaysome::getAllIcons();
-        $html='<html><head>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2.min.css" integrity="sha512-WVPV4X/HI/9wClnD+CxFC0qSDE7blZgqZQLjrnEXQUhkm0nkDcoux3ysgIb3oG74MEHobuvEQg7W3XvZK9ZC/Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2.min.js" integrity="sha512-E/kDI3wGWMS9Ea/EsDJMduyGSSx/VfdNXAMr/URDQwOAGkGn3uYaZa4Y7bim3ad/6mMA82l+9FxNWl64BR9pkw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        </head>
-        <body>
-        <form method="post" action="'.base_url('Generator/controllergenerate').'">
-        <b>Name Of Module without Space</b> :
-        <input name="modulename" type="text" >
-        <p>
-<input type="button" value="Add" onclick="addRow(\'tblClone\');">
-<input type="button" value="Remove Last" onclick="delRow(\'tblClone\');">
-<select id="moduleicon" class="text-primary fa-select select2 form-control fill" name="moduleicon" style="font-family: \'FontAwesome\', \'sans-serif\';" required>';
-                         foreach ($faicons as $key2=>$val2){
-                        
-                            $html.='<option value="'.$key2.'" > '.$val2.'  '.$key2.' </option>';
-                        }
-                   $html.='</select>
-</p>
-<p>Don\'t Put Id we already take it </p>
-        <table id="tblClone" border="1">
-          <tr>
-            <th>The Name Of Column</th>
-            <th>SQL type</th>
-            <th>html type</th>
-            <th>html Required ?</th>
-          </tr>
-          <tr id="first">
-            <th><input type="text" name="col[]" required ></th>
-            <th>
-            <select name="sqlType[]" required>
-            <option value="varchar(255)">Varchar(255)</option>
-            <option value="text">Text</option>
-            <option value="bigint">BigINt</option>
-            <option value="int(255)">Int</option>
-            </select>
-            </th>
-            <th>
-            <select name="htmlType[]" onchange="getHtml(this);" required >
-            <option value="text">Text</option>
-            <option value="textarea">TextArea</option>
-            <option value="number">Number</option>
-            <option value="image">Image</option>
-            <option value="file">File</option>
-            <option value="fixedselect">Fixed select</option>
-            <option value="dbselect">Model select</option>
-            </select>
-            </th>
-            <th>
-            <select name="htmlRequired[]" required>
-            <option value="required">Yes</option>
-            <option value="">No</option>
-            </select>
-            </th>
-          </tr>
-          
-        </table>
-        <input type="submit" value="Save">
-        </form>
-        <script>
-        document.getElementById("moduleicon").select2();
-        function addRow(id)
-    { var x=document.getElementById(id).tBodies[0];  //get the table
-      var node=x.rows[1].cloneNode(true);    //clone the previous node or row
-      x.appendChild(node);   //add the node or row to the table
-    }  
+        $faicons = FontAwaysome::getAllIcons();
+        $data = [
+            'faicons'     => $faicons,
+            'currentMenu' => 'generator',
+            'bread'       => 'CRUD Generator',
+            'user'        => $this->currentUser,
+        ];
 
-    function delRow(id)
-    { var x=document.getElementById(id).tBodies[0]; //get the table
-      var len=x.rows.length;
-      if(len>2)
-      x.deleteRow(len-1); //delete the last row
+        return view('admin/generator/create', $data);
     }
 
-    function getHtml(sel){
-        var parent=sel.parentElement;
-        if(sel.value=="fixedselect"){
-        const node = document.createElement("textarea");
-        node.name = "fixedselect"+sel.name;
-        parent.appendChild(node);
-        }
-        else if(sel.value=="dbselect"){
-        const node = document.createElement("input");
-        node.type="text";
-        node.name = "dbselect"+sel.name;
-        parent.appendChild(node);
-        }
-        else{
-             var count = parent.childElementCount;
-            //  alert(count);
-             if(count>1)
-             {
-                 parent.removeChild(parent.lastChild);
-             }
-        }
-    }
-        </script>
-        </body>
-        </html>
-        ';
-        return $html;
-        
-    }
-    
-    public function Settings()
+    public function modules()
     {
-        $faicons=FontAwaysome::getAllIcons();
-        $html='
-        <html><head>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2.min.css" integrity="sha512-WVPV4X/HI/9wClnD+CxFC0qSDE7blZgqZQLjrnEXQUhkm0nkDcoux3ysgIb3oG74MEHobuvEQg7W3XvZK9ZC/Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2.min.js" integrity="sha512-E/kDI3wGWMS9Ea/EsDJMduyGSSx/VfdNXAMr/URDQwOAGkGn3uYaZa4Y7bim3ad/6mMA82l+9FxNWl64BR9pkw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        </head>
-        <body>
-        <form method="post" action="'.base_url('Generator/Settingsgenerate').'">
-        <b>Name Of Settings Module without Space</b> :
-        <input name="modulename" type="text" >
-<p>Don\'t Put Id we already take it </p>
-        <p>
-<select id="moduleicon" class="text-primary fa-select select2 form-control fill" name="moduleicon" style="font-family: \'FontAwesome\', \'sans-serif\';" required>';
-                         foreach ($faicons as $key2=>$val2){
-                        
-                            $html.='<option value="'.$key2.'" > '.$val2.'  '.$key2.' </option>';
-                        }
-                   $html.='</select>
-</p>
-        
-        <input type="submit" value="Save">
-        </form>
-       </body>
-       </html>
-        ';
-        return $html;
-        
+        $model = new CmsModuleModel();
+        $modules = $model->orderBy('sort_order', 'ASC')->orderBy('created_at', 'DESC')->findAll();
+
+        $data = [
+            'modules'     => $modules,
+            'currentMenu' => 'modules',
+            'bread'       => 'Manage Modules',
+            'user'        => $this->currentUser,
+        ];
+
+        return view('admin/generator/modules', $data);
     }
-     public function controllergenerate()
-     {
-         $formFieldsR=[];
-         if(isset($_REQUEST))
-         {
-             var_dump($_POST);
-            //  die();
-          $name=ucfirst($_POST['modulename']);
-          $this->name=ucfirst($_POST['modulename']);
-          $this->icon=str_replace("fa-","",$_POST['moduleicon']);
-          
-          $this->Path=base_url('uploads/'.strtolower($name));
-          $cnt1=count($_POST['col']);
-          $cols=$_POST['col'];
-          $sqlTypes=$_POST['sqlType'];
-          $htmlTypes=$_POST['htmlType'];
-          if(isset($_POST['fixedselecthtmlType']))
-          $fixedSelecthtmlTypes=$_POST['fixedselecthtmlType'];
-          
-          if(isset($_POST['dbselecthtmlType']))
-          $dbSelecthtmlTypes=$_POST['dbselecthtmlType'];
-          
-          $htmlRequireds=$_POST['htmlRequired'];
-          var_dump($cnt1);
-          $sj=0;
-          $dbj=0;
-          for ($k=0; $k<$cnt1;$k++)
-          {
-              if($htmlTypes[$k]=="dbselect"){
-                  $options=explode(',',$dbSelecthtmlTypes[$dbj]);
-              $formFieldsR[$cols[$k]]=[$sqlTypes[$k],'NOT NULL',$htmlTypes[$k], $htmlRequireds[$k], $options];
-              $dbj++;
-              }
-              elseif($htmlTypes[$k]=="fixedselect"){
-                  $options=explode(',',$fixedSelecthtmlTypes[$sj]);
-              $formFieldsR[$cols[$k]]=[$sqlTypes[$k],'NOT NULL',$htmlTypes[$k], $htmlRequireds[$k], $options];
-              $sj++;
-              }
-              else{
-                 
-              $formFieldsR[$cols[$k]]=[$sqlTypes[$k],'NOT NULL',$htmlTypes[$k], $htmlRequireds[$k]];    
-              }
-          }
-          
-          echo"<pre>";
-          var_dump($formFieldsR);
-        //   die("</pre>");
-         }
-         $db = \Config\Database::connect();
 
-         $name="Exam";
-         
-         $fields=[
-             'name'=>['varchar(255)','NOT NULL','text','required'],
-             'phone'=>['bigint','NOT NULL','number','required'],
-             'school'=>['text','NOT NULL','textarea','required'],
-             'std'=>['int','NOT NULL','fixedselect','required',[7=>'7th',8=>'8th']],
-            //  'job'=>['int','NOT NULL','dbselect','required',['model'=>'JobPost','key'=>'id','label'=>'title']],
-             'profile_pic'=>['varchar(255)','NOT NULL','image','required'],
-             ];
-        if(isset($_REQUEST)){
-         $fields=$formFieldsR;
-         $name=ucfirst($_POST['modulename']);
+    public function deleteModule($id)
+    {
+        $model = new CmsModuleModel();
+        $module = $model->find($id);
+
+        if (!$module) {
+            $this->flashError('Module not found.');
+            return redirect()->to(base_url('admin/generator/modules'));
         }
-        $this->name=$name;
-        $this->Path=base_url('uploads/'.strtolower($name));
-        $this->fields=$fields;
-        $q1="CREATE TABLE `".strtolower($name)."` (
-  `id` int(255) NOT NULL AUTO_INCREMENT,";
-  $modelKeys="  'id' , ";
-  $storeFileds='';
-  $fieldVariables='';
-  $imageFields=[];
-  $uploadFields=[];
-  $SelectDBModels='';
-  $SelectDBModelsData='';
-//   $fixedSelects=[];
-  $formFields='';
-  $tableFields='';
-  $tableHeads='';
-  foreach ($fields as $key=>$field)
-  {
-      $modelKeys.=" '".$key."' , ";
-      if($field[2]!='image'&& $field[2]!='file')
-      $storeFileds.=' "'.$key.'" => $this->request->getVar("'.$key.'") , 
-      ';
-      
-      if($field[2]=='image')
-      $imageFields[]=$key;
-      
-      if($field[2]=='file')
-      $uploadFields[]=$key;
-      
-      if($field[2]=='fixedselect')
-      {
-          echo "Fixedfields dumped";
-          var_dump($field);
-        //   die();
-          $this->fixedSelects[$key]=$field[4];
-          $tableFields.='
-      <td><?=$'.$key.'s[$record["'.$key.'"]]?></td>';
-      }
-      if($field[2]=='dbselect')
-     { 
-         echo "DBfields dumped";
-          var_dump($field);
-        //   die();
-         
-        $this->dbSelects[$key]=$field[4];
-        $model=$field[4][0];
-        $label=$field[4][2];
-        $key1=$field[4][1];
-        $SelectDBModels.="use App\Models".'\\'.$model."
-        ;";
-        $SelectDBModelsData.='
-        $model=new '.$model.'();
-        $'.strtolower($model).'s=$model->findAll();
-        $'.strtolower($model).'2=[];
-        foreach ($'.strtolower($model).'s as $'.strtolower($model).')
-        $'.strtolower($model).'2[$'.strtolower($model).'[\''.$key1.'\']]=$'.strtolower($model).'[\''.$label.'\'];
-        
-        $data[\''.strtolower($model).'s\']=$'.strtolower($model).'2;
-        
-        ';
-        $tableFields.='
-      <td><?=$'.strtolower($model).'s[$record["'.$key.'"]]?></td>';
-     }
-      var_dump($this->fixedSelects);
-      $tableHeads.='
-      <th>'.ucfirst($key).'</th>';
-      
-      if($field[2]!='dbselect' && $field[2]!='fixedselect' &&
-      $field[2]!='image' && $field[2]!='file'
-      )
-     { $tableFields.='
-      <td><?=$record["'.$key.'"]?></td>';
-     }
-      
-      $formFields.=$this->getField($key,$field[2],$field[3]);
-      
-      $fieldVariables.='
-      $'.$key.'=(isset($CurrentRecord))?$CurrentRecord["'.$key.'"]:"";
-      ';
-      
-      if($field[2]=="image"||$field[2]=="file")
-      {
-        
-        $path = "uploads/".strtolower($name).'s/';
-      
-        if($field[2]=="image")
-        $tableFields.='
-      <td><img style="height:150px;" src="<?=base_url(\''.$path.'\')?>\<?=$record["'.$key.'"]?>"</td>';
-      
-        if($field[2]=="file")
-        $tableFields.='
-      <td><a href="<?=base_url(\''.$path.'\')?>\<?=$record["'.$key.'"]?>" > Download File </a></td>';
-      
-        if (!is_dir($path)) {
-            mkdir($path, 0755, true);
+
+        // 1. Drop Database Table
+        try {
+            $forge = \Config\Database::forge();
+            $forge->dropTable($module['table_name'], true);
+        } catch (\Throwable $e) {
+            log_message('error', 'Failed to drop table ' . $module['table_name'] . ': ' . $e->getMessage());
         }
-      }
-      
-      $q1.="`".$key."` $field[0]  $field[1] , ";
-  }
-  $uploadFieldshtml='';
-  if(count($imageFields)>0)
-  {
-    //   $target_dir="uploads/".strtolower($name)."s";
-      foreach ($imageFields as $ik=>$iv)
-      {
-          $uploadFieldshtml.='
-          
-          $target_dir="uploads/'.strtolower($name)."s".'";
-            $size=500000*100;
-            $file=$_FILES[\''.$iv.'\'];
-            $uploadResult=$this->checkAndUploadImage($file, $target_dir, $size);
-            $uploadOk=$uploadResult[\'uploadOk\'];
-            if($uploadOk==1){
-                $data[\''.$iv.'\']=$uploadResult[\'filename\'];
-            }
-            else{
-                if($id==0)
-                {
-                    session()->setFlashdata("message", "The '.$iv.' is Must For New '.$name.' ");
-                     return redirect()->back()->withInput();
+
+        // 2. Delete Controller File
+        $controllerFile = APPPATH . 'Controllers/' . $module['controller'] . '.php';
+        if (file_exists($controllerFile)) {
+            unlink($controllerFile);
+        }
+
+        // 3. Delete Model File
+        $modelFile = APPPATH . 'Models/' . $module['model'] . '.php';
+        if (file_exists($modelFile)) {
+            unlink($modelFile);
+        }
+
+        // 4. Delete View Directory and files
+        $viewDir = APPPATH . 'Views/admin/' . $module['slug'];
+        if (is_dir($viewDir)) {
+            $files = glob($viewDir . '/*');
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    unlink($file);
                 }
-                else{
-                    if(($_FILES[\''.$iv.'\'][\'tmp_name\'])!="")
-                    {
-                        
-                    session()->setFlashdata("message", "The '.$iv.' is Invalid");
-                     return redirect()->back()->withInput();
+            }
+            rmdir($viewDir);
+        }
+
+        // 5. Delete Module Record
+        $model->delete($id);
+
+        $this->flashSuccess('Module "' . $module['name'] . '" and its resources were deleted successfully.');
+        return redirect()->to(base_url('admin/generator/modules'));
+    }
+
+    public function controllergenerate()
+    {
+        $rawName = trim((string) $this->request->getPost('modulename'));
+        $name = ucfirst(preg_replace('/[^a-zA-Z0-9]/', '', $rawName));
+
+        if (empty($name)) {
+            $this->flashError('Module name is required and must contain only letters and numbers.');
+            return redirect()->back()->withInput();
+        }
+
+        $slug = strtolower($name);
+        $rawIcon = trim((string) ($this->request->getPost('moduleicon') ?? 'folder'));
+        $icon = str_replace('fa-', '', $rawIcon);
+
+        $moduleModel = new CmsModuleModel();
+        if ($moduleModel->where('slug', $slug)->first()) {
+            $this->flashError("A module with the slug '{$slug}' already exists. Please choose another name or delete the existing module.");
+            return redirect()->back()->withInput();
+        }
+
+        $cols = $this->request->getPost('col') ?? [];
+        $sqlTypes = $this->request->getPost('sqlType') ?? [];
+        $htmlTypes = $this->request->getPost('htmlType') ?? [];
+        $htmlRequireds = $this->request->getPost('htmlRequired') ?? [];
+        $fixedSelectVals = $this->request->getPost('fixedselecthtmlType') ?? [];
+        $dbSelectVals = $this->request->getPost('dbselecthtmlType') ?? [];
+
+        if (empty($cols) || count($cols) === 0) {
+            $this->flashError('Please define at least one field for this module.');
+            return redirect()->back()->withInput();
+        }
+
+        // Forge Fields & Schema Setup
+        $forge = \Config\Database::forge();
+        $fieldsSchema = [
+            'id' => [
+                'type'           => 'INT',
+                'constraint'     => 11,
+                'unsigned'       => true,
+                'auto_increment' => true,
+            ],
+        ];
+
+        $modelKeys = "'id'";
+        $storeFields = '';
+        $uploadFields = '';
+        $fieldVariables = '';
+        $tableHeads = '';
+        $tableFields = '';
+        $formFields = '';
+        $selectDBModels = '';
+        $selectDBModelsData = '';
+        $fieldsMetadata = [];
+
+        $fixedIndex = 0;
+        $dbIndex = 0;
+
+        for ($i = 0; $i < count($cols); $i++) {
+            $colName = preg_replace('/[^a-zA-Z0-9_]/', '', strtolower(trim($cols[$i])));
+            if (empty($colName) || $colName === 'id') {
+                continue;
+            }
+
+            $sqlType = strtolower(trim($sqlTypes[$i] ?? 'varchar(255)'));
+            $htmlType = strtolower(trim($htmlTypes[$i] ?? 'text'));
+            $isRequired = !empty($htmlRequireds[$i]) && $htmlRequireds[$i] === 'required';
+            $requiredAttr = $isRequired ? 'required' : '';
+
+            $options = [];
+            if ($htmlType === 'fixedselect' && isset($fixedSelectVals[$fixedIndex])) {
+                $rawOptions = explode(',', $fixedSelectVals[$fixedIndex]);
+                foreach ($rawOptions as $opt) {
+                    $opt = trim($opt);
+                    if ($opt !== '') {
+                        $parts = explode(':', $opt);
+                        if (count($parts) === 2) {
+                            $options[trim($parts[0])] = trim($parts[1]);
+                        } else {
+                            $options[$opt] = $opt;
+                        }
                     }
                 }
+                $fixedIndex++;
+            } elseif ($htmlType === 'dbselect' && isset($dbSelectVals[$dbIndex])) {
+                $options = array_map('trim', explode(',', $dbSelectVals[$dbIndex]));
+                $dbIndex++;
             }
-          ';
-      }
-      
-      
-  }
-  if(count($uploadFields)>0){
-      foreach ($uploadFields as $ik=>$iv)
-      {
-          $uploadFieldshtml.='
-          
-          $target_dir="uploads/'.strtolower($name)."s".'";
-            $size=500000*100;
-            $file=$_FILES[\''.$iv.'\'];
-            $uploadResult=$this->checkAndUploadFile($file, $target_dir, $size);
-            $uploadOk=$uploadResult[\'uploadOk\'];
-            if($uploadOk==1){
-                $data[\''.$iv.'\']=$uploadResult[\'filename\'];
-            }
-            else{
-                if($id==0)
-                {
-                    session()->setFlashdata("message", "The '.$iv.' is Must For New '.$name.' ");
-                     return redirect()->back()->withInput();
-                }
-                else{
-                    if(($_FILES[\''.$iv.'\'][\'tmp_name\'])!="")
-                    {
-                        
-                    session()->setFlashdata("message", "The '.$iv.' is Invalid");
-                     return redirect()->back()->withInput();
-                    }
-                }
-            }
-          ';
-      }
-  }
-  
-  $q1.=" PRIMARY KEY (id) )ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-  var_dump($modelKeys);
-  var_dump($q1); 
-  $query   = $db->query($q1);
-// $results = $query->error();
-//   var_dump($results);
-//   die();
-        
 
-         echo "Testing Controller Generation";
-         $url = 'public/templates/controller/Controller.html';
-         $html = file_get_contents($url);
-         $html2= str_replace("{ClassName}",$name.'Controller',$html);
-         $controller= str_replace("{ModelClassName}",$name.'Model',$html2);
-         $controller= str_replace("{StoreFields}",$storeFileds,$controller);
-         $controller= str_replace("{UploadFields}",$uploadFieldshtml,$controller);
-         $controller= str_replace("{Name}",$name,$controller);
-         $controller= str_replace("{folder}",strtolower($name),$controller);
-         $controller= str_replace("{SelectDBModels}",$SelectDBModels,$controller);
-         $controller= str_replace("{SelectDBModelsData}",$SelectDBModelsData,$controller);
-         
-         $url = 'public/templates/model/Model.html';
-         $html = file_get_contents($url);
-         $model= str_replace("{ClassName}",$name.'Model',$html);
-         $model= str_replace("{Fields}",$modelKeys,$model);
-         $model= str_replace("{TableName}",strtolower($name),$model);
-         
-         
-         $url = 'public/templates/view/View.html';
-         $html = file_get_contents($url);
-         $view= str_replace("{FormFields}",$formFields,$html);
-         $view= str_replace("{Name}",$name,$view);
-         $view= str_replace("{fieldVariables}",$fieldVariables,$view);
-         $view= str_replace("{TableHeads}",$tableHeads,$view);
-         $view= str_replace("{TableFields}",$tableFields,$view);
-         
-         
-        
-        
-        file_put_contents('app/Controllers/'.$name.'Controller.php', $controller);
-        
-        file_put_contents('app/Models/'.$name.'Model.php', $model);
-        
-        
-        
-        
-        
-        $menu='$menu[\''.$this->name.'\'] =[
-				        \'label\'=>\''.$this->name.'\',
-				        \'icon\'=>\''.$this->icon.'\',
-				        \'submenu\'=>false,
-				            ];
-                    // {Menu Array}
-                    ';
-        $url = 'app/Views/layouts/admindash.php';
-        $html = file_get_contents($url);
-        $menu1= str_replace("// {Menu Array}",$menu,$html);
-        file_put_contents('app/Views/layouts/admindash.php', $menu1);
-        
-        
-        
-        $route='
-        $routes->get("'.$this->name.'", "'.$this->name.'Controller::index");
-        $routes->post("'.$this->name.'", "'.$this->name.'Controller::Store");
-        //
-        // {New Admin Routes}';
-        
-        $url = 'app/Config/Routes.php';
-        $html = file_get_contents($url);
-        $route1= str_replace("// {New Admin Routes}",$route,$html);
-        file_put_contents('app/Config/Routes.php', $route1);
-        
-        
-        $path = "app/Views/admin/".strtolower($name);
-        if (!is_dir($path)) {
-            mkdir($path, 0755, true);
+            $fieldsMetadata[$colName] = [
+                'sqlType'  => $sqlType,
+                'htmlType' => $htmlType,
+                'required' => $isRequired,
+                'options'  => $options,
+            ];
+
+            // Map SQL types for Forge
+            $fieldsSchema[$colName] = $this->parseForgeFieldType($sqlType);
+
+            $modelKeys .= ", '{$colName}'";
+
+            // Store fields vs Upload fields in Controller
+            if ($htmlType === 'image') {
+                $uploadFields .= "        if (\$uploaded = \$this->uploadImage('{$colName}', '{$slug}')) {\n";
+                $uploadFields .= "            \$data['{$colName}'] = \$uploaded;\n";
+                $uploadFields .= "        } elseif (\$id === 0 && '{$requiredAttr}' === 'required') {\n";
+                $uploadFields .= "            \$this->flashError('The {$colName} image is required.');\n";
+                $uploadFields .= "            return redirect()->back()->withInput();\n";
+                $uploadFields .= "        }\n\n";
+            } elseif ($htmlType === 'file') {
+                $uploadFields .= "        if (\$uploaded = \$this->uploadFile('{$colName}', '{$slug}')) {\n";
+                $uploadFields .= "            \$data['{$colName}'] = \$uploaded;\n";
+                $uploadFields .= "        } elseif (\$id === 0 && '{$requiredAttr}' === 'required') {\n";
+                $uploadFields .= "            \$this->flashError('The {$colName} file is required.');\n";
+                $uploadFields .= "            return redirect()->back()->withInput();\n";
+                $uploadFields .= "        }\n\n";
+            } else {
+                $storeFields .= "            '{$colName}' => \$this->request->getPost('{$colName}'),\n";
+            }
+
+            // View variable defaults
+            $fieldVariables .= "    \${$colName} = (isset(\$CurrentRecord['{$colName}'])) ? \$CurrentRecord['{$colName}'] : '';\n";
+
+            // Table headers and columns
+            $colTitle = ucfirst(str_replace('_', ' ', $colName));
+            $tableHeads .= "                            <th>{$colTitle}</th>\n";
+
+            if ($htmlType === 'image') {
+                $tableFields .= "                            <td>\n";
+                $tableFields .= "                                <?php if (!empty(\$record['{$colName}'])) { ?>\n";
+                $tableFields .= "                                    <img src=\"<?= base_url('uploads/{$slug}/' . \$record['{$colName}']) ?>\" style=\"max-height: 50px; border-radius: 4px;\" alt=\"{$colName}\">\n";
+                $tableFields .= "                                <?php } ?>\n";
+                $tableFields .= "                            </td>\n";
+            } elseif ($htmlType === 'file') {
+                $tableFields .= "                            <td>\n";
+                $tableFields .= "                                <?php if (!empty(\$record['{$colName}'])) { ?>\n";
+                $tableFields .= "                                    <a href=\"<?= base_url('uploads/{$slug}/' . \$record['{$colName}']) ?>\" target=\"_blank\" class=\"btn btn-sm btn-outline-secondary\"><i class=\"fas fa-download me-1\"></i>File</a>\n";
+                $tableFields .= "                                <?php } ?>\n";
+                $tableFields .= "                            </td>\n";
+            } else {
+                $tableFields .= "                            <td><?= esc(\$record['{$colName}']) ?></td>\n";
+            }
+
+            // Form inputs
+            $formFields .= $this->buildFormFieldHtml($colName, $colTitle, $htmlType, $requiredAttr, $slug, $options);
         }
-        
-        file_put_contents($path.'/add_edit.php', $view);
-        
-        return redirect()->to(base_url('admin/'.$this->name));
-         
-     }
-     
-     public function Settingsgenerate()
-     {
-        //  die('ok');
-        
-        
-        
-        $db = \Config\Database::connect();
-         $name=$this->request->getVar('modulename');
-         $this->icon=str_replace("fa-","",$_POST['moduleicon']);
-         var_dump($name);
-         
-         
-         $path = "uploads/settings/".strtolower($name);
-        
-        if (!is_dir($path)) {
-            mkdir($path, 0755, true);
+
+        // 1. Create DB Table with Forge
+        try {
+            $forge->addField($fieldsSchema);
+            $forge->addPrimaryKey('id');
+            $forge->createTable($slug, true);
+        } catch (\Throwable $e) {
+            $this->flashError('Failed to create database table: ' . $e->getMessage());
+            return redirect()->back()->withInput();
         }
-         
-         $classname=$name.'SettingsController';
-         $modelname=$name.'SettingsModel';
-         $pathname=strtolower($name);
-         $tablename=$pathname.'settings';
-         $q1="CREATE TABLE `".$tablename."` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `value` text NOT NULL,
-  `type` enum('text','textarea','image','number','flaticons','dbmodel','fixedSelect') NOT NULL,
-  `hint` text NOT NULL,
-  `jsondata` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$query   = $db->query($q1);
-    $q1="ALTER TABLE `".$tablename."`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`);";
-  $query   = $db->query($q1);
-  $q1="ALTER TABLE `".$tablename."`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;";
-  $query   = $db->query($q1);
-    echo "Generating Controller";
-    $url = 'templates/controller/SettingsController.html';
-    $html = file_get_contents($url);
-    $html2= str_replace("{ClassName}",$classname,$html);
-    $controller= str_replace("{ModelClassName}",$modelname,$html2);
-    $controller= str_replace("{PathName}",$pathname,$controller);
-    file_put_contents('../app/Controllers/'.$classname.'.php', $controller);
-    
-    echo "<br>Generating Model";
-    $url = 'templates/model/SettingsModel.html';
-    $html = file_get_contents($url);
-    $html2= str_replace("{TableName}",$tablename,$html);
-    $model= str_replace("{ModelClassName}",$modelname,$html2);
-    file_put_contents('../app/Models/'.$modelname.'.php', $model);
-    
-    
-    $path = "../app/Views/admin/settings";
-        if (!is_dir($path)) {
-            mkdir($path, 0755, true);
+
+        // 2. Generate Controller
+        $tplBase = is_dir(FCPATH . 'templates') ? FCPATH . 'templates/' : ROOTPATH . 'public/templates/';
+        $controllerTemplate = file_get_contents($tplBase . 'controller/Controller.html');
+        $controllerContent = str_replace([
+            '{ClassName}',
+            '{ModelClassName}',
+            '{StoreFields}',
+            '{UploadFields}',
+            '{Name}',
+            '{folder}',
+            '{SelectDBModels}',
+            '{SelectDBModelsData}',
+        ], [
+            $name . 'Controller',
+            $name . 'Model',
+            rtrim($storeFields),
+            rtrim($uploadFields),
+            $name,
+            $slug,
+            $selectDBModels,
+            $selectDBModelsData,
+        ], $controllerTemplate);
+
+        file_put_contents(APPPATH . 'Controllers/' . $name . 'Controller.php', $controllerContent);
+
+        // 3. Generate Model
+        $modelTemplate = file_get_contents($tplBase . 'model/Model.html');
+        $modelContent = str_replace([
+            '{ClassName}',
+            '{Fields}',
+            '{TableName}',
+        ], [
+            $name . 'Model',
+            $modelKeys,
+            $slug,
+        ], $modelTemplate);
+
+        file_put_contents(APPPATH . 'Models/' . $name . 'Model.php', $modelContent);
+
+        // 4. Generate Views
+        $viewTemplate = file_get_contents($tplBase . 'view/View.html');
+        $viewContent = str_replace([
+            '{Name}',
+            '{folder}',
+            '{fieldVariables}',
+            '{TableHeads}',
+            '{TableFields}',
+            '{FormFields}',
+        ], [
+            $name,
+            $slug,
+            rtrim($fieldVariables),
+            rtrim($tableHeads),
+            rtrim($tableFields),
+            rtrim($formFields),
+        ], $viewTemplate);
+
+        $viewDir = APPPATH . 'Views/admin/' . $slug;
+        if (!is_dir($viewDir)) {
+            mkdir($viewDir, 0755, true);
         }
-        
-    echo "<br>Generating View";
-    $url = 'templates/view/SettingsView.html';
-    $html = file_get_contents($url);
-    $view= str_replace("{PathName}",$pathname,$html);
-    // $model= str_replace("{ModelClassName}",$modelname,$html2);
-    file_put_contents('../app/Views/admin/settings/'.$pathname.'.php', $view);
-    
-    echo "<br>Generating Routes";
-    $route='$routes->get("settings/'.$pathname.'", "'.$classname.'::index");
-    $routes->post("settings/'.$pathname.'", "'.$classname.'::store");
-    //
-    // {New Admin Settings Routes}';
-        
-        $url = '../app/Config/Routes.php';
-        $html = file_get_contents($url);
-        $route1= str_replace("// {New Admin Settings Routes}",$route,$html);
-        file_put_contents('../app/Config/Routes.php', $route1);
-        
-    
-    echo "<br>Generating MENU";
-        
-        
-    $menu='$settings_menu[\''.$pathname.'\']=[
-				        \'label\'=>\''.$name.' Settings\',
-				        \'icon\'=>\''.$this->icon.'\',
-				        \'submenu\'=>false,
-				            ];
-                    // {Settings Menu Array}
-                    ';
-        $url = '../app/Views/layouts/admindash.php';
-        $html = file_get_contents($url);
-        $menu1= str_replace("// {Settings Menu Array}",$menu,$html);
-        file_put_contents('../app/Views/layouts/admindash.php', $menu1);
-        
-        return redirect()->to(base_url('admin/settings/'.$pathname)); 
-     }
-     
-     public function getFixedSelectOptions($key,$v1=-1)
-     {
-        //  var_dump($key);
-        //  var_dump($this->fixedselects[$key]);
-         $html='<option value="">Please Select '.strtoupper($key).'</option>';
-         
-         $html.='
-        <?php $'.$key.'s ='.$this->serializeforSelect($this->fixedSelects[$key]).';  foreach($'.$key.'s as $key=>$val){?>
-        <option value="<?=$key?>" <?=($key==$'.$key.')?\'selected\':""?> ><?=$val?></option>
-        <?php }?>';
-         
-         return $html;
-     }
-     
-     public function getDbSelectOptions($key,$v1=-1)
-     {
-         var_dump($key);
-          $model=$this->fields[$key][4][0];
-         var_dump($model);
-        
-         $selctOptions='$'.strtolower($model).'s';
-         
-         
-        //  var_dump($key);
-        //  var_dump($this->fixedselects[$key]);
-         $html='<option value="">Please Select '.strtoupper($key).'</option>';
-         
-         $html.='
-        <?php  foreach($'.strtolower($model).'s as $key=>$val){?>
-        <option value="<?=$key?>" <?=($key==$'.$key.')?\'selected\':""?> ><?=$val?></option>
-        <?php }?>';
-         
-         return $html;
-     }
-     public function serializeforSelect($selects)
-     {
-         $options='[';
-         foreach ($selects as $sk=>$sv){
-         $options.=" '".$sk."'=>";
-         $options.="'".$sv."' , ";
-         }
-         $options.=']';
-         return $options;
-     }
-     
-     public function getField($key,$type,$required)
-     {
-         var_dump($type);
-         $html='';
-         switch ($type) {
-             case 'text':
-             case 'number':
-             case 'email':
-                 // code...
-                 $html.='
-          <div class="form-group col-md-6 mb-3">
-            <label for="'.$key.'" class="control-label mb-1">'.ucfirst($key).' </label>
-            <input id="'.$key.'" name="'.$key.'" type="'.$type.'" class="form-control" value="<?=old(\''.$key.'\',$'.$key.')?>" '.$required.'>
-          </div>
-          ';
-                 break;
-                 
-             case 'textarea':
-                 // code...
-                 $html.='
-          <div class="form-group col-md-6 mb-3">
-            <label for="'.$key.'" class="control-label mb-1">'.ucfirst($key).' </label>
-            <textarea id="'.$key.'" name="'.$key.'" type="text" class="form-control"  '.$required.' ><?=old("'.$key.'",$'.$key.')?></textarea>
-          </div>
-          ';
-                 break;
-            
-            case 'fixedselect':
-                 // code...
-                 $html.='
-          <div class="form-group col-md-6 mb-3">
-            <label for="'.$key.'" class="control-label mb-1">'.ucfirst($key).' </label>
-            <select id="'.$key.'" name="'.$key.'" type="text" class="form-control"  '.$required.' >'.
-            $this->getFixedSelectOptions($key,'$'.$key)
-            .'</select>
-          </div>
-          ';
-                 break;
-             case 'dbselect':
-                 // code...
-                 $html.='
-          <div class="form-group col-md-6 mb-3">
-            <label for="'.$key.'" class="control-label mb-1">'.ucfirst($key).' </label>
-            <select id="'.$key.'" name="'.$key.'" type="text" class="form-control"  '.$required.' >'.
-            $this->getDbSelectOptions($key,'$'.$key)
-            .'</select>
-          </div>
-          ';
-                 break;
-             case 'image':
-                 
-                 // code...
-                 $html.='
-          <div class="form-group col-md-6 mb-3">
-            <label for="'.$key.'" class="control-label mb-1">'.ucfirst($key).' </label>
-            
-        <?php if(isset($CurrentRecord)){ ?>
-        <input id="'.$key.'" name="'.$key.'" type="file" class="form-control" value="<?=base_url(\'uploads/'.strtolower($this->name).'s/\'.$'.$key.')?>" >
-        <img src="<?=base_url(\'uploads/'.strtolower($this->name).'s/\'.$'.$key.')?>" class="w-100" />
-        <?php } else {?>
-        <input id="'.$key.'" name="'.$key.'" type="file" class="form-control" value="<?=base_url(\'uploads/'.strtolower($this->name).'s/\'.$'.$key.')?>" '.$required.'>
-        <?php } ?>
-          </div>
-          ';
-                 break;
-            
+        file_put_contents($viewDir . '/add_edit.php', $viewContent);
+
+        // 5. Ensure Upload directory exists
+        $uploadBase = is_dir(FCPATH . 'uploads') ? FCPATH . 'uploads/' : ROOTPATH . 'public/uploads/';
+        $uploadDir = $uploadBase . $slug;
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        // 6. Register Module in cms_modules table (Zero File Mutation)
+        $moduleModel->insert([
+            'name'        => $name,
+            'slug'        => $slug,
+            'icon'        => $icon,
+            'table_name'  => $slug,
+            'controller'  => $name . 'Controller',
+            'model'       => $name . 'Model',
+            'fields_json' => json_encode($fieldsMetadata),
+            'in_menu'     => 1,
+            'sort_order'  => 0,
+            'is_active'   => 1,
+        ]);
+
+        $this->flashSuccess("Module '{$name}' created successfully with modern zero-mutation routing!");
+        return redirect()->to(base_url('admin/' . $slug));
+    }
+
+    private function parseForgeFieldType(string $sqlType): array
+    {
+        $sqlType = trim($sqlType);
+        if (preg_match('/^varchar\((\d+)\)$/i', $sqlType, $m)) {
+            return ['type' => 'VARCHAR', 'constraint' => (int) $m[1], 'null' => true];
+        }
+        if (preg_match('/^decimal\((\d+),(\d+)\)$/i', $sqlType, $m)) {
+            return ['type' => 'DECIMAL', 'constraint' => "{$m[1]},{$m[2]}", 'null' => true];
+        }
+        if (preg_match('/^int/i', $sqlType)) {
+            return ['type' => 'INT', 'constraint' => 11, 'null' => true];
+        }
+        if ($sqlType === 'bigint') {
+            return ['type' => 'BIGINT', 'null' => true];
+        }
+        if ($sqlType === 'text') {
+            return ['type' => 'TEXT', 'null' => true];
+        }
+        if ($sqlType === 'date') {
+            return ['type' => 'DATE', 'null' => true];
+        }
+        if ($sqlType === 'datetime') {
+            return ['type' => 'DATETIME', 'null' => true];
+        }
+
+        return ['type' => 'VARCHAR', 'constraint' => 255, 'null' => true];
+    }
+
+    private function buildFormFieldHtml(string $col, string $title, string $type, string $req, string $slug, array $options = []): string
+    {
+        $reqAttr = $req ? 'required' : '';
+        $reqStar = $req ? '<span class="text-danger">*</span>' : '';
+
+        switch ($type) {
+            case 'textarea':
+                return <<<HTML
+                    <div class="col-md-12">
+                        <label for="{$col}" class="form-label font-weight-bold">{$title} {$reqStar}</label>
+                        <textarea id="{$col}" name="{$col}" class="form-control" rows="3" {$reqAttr}><?= old('{$col}', \${$col}) ?></textarea>
+                    </div>\n
+HTML;
+
+            case 'number':
+                return <<<HTML
+                    <div class="col-md-6">
+                        <label for="{$col}" class="form-label font-weight-bold">{$title} {$reqStar}</label>
+                        <input id="{$col}" name="{$col}" type="number" step="any" class="form-control" value="<?= old('{$col}', \${$col}) ?>" {$reqAttr}>
+                    </div>\n
+HTML;
+
+            case 'email':
+                return <<<HTML
+                    <div class="col-md-6">
+                        <label for="{$col}" class="form-label font-weight-bold">{$title} {$reqStar}</label>
+                        <input id="{$col}" name="{$col}" type="email" class="form-control" value="<?= old('{$col}', \${$col}) ?>" {$reqAttr}>
+                    </div>\n
+HTML;
+
+            case 'image':
+                return <<<HTML
+                    <div class="col-md-6">
+                        <label for="{$col}" class="form-label font-weight-bold">{$title} {$reqStar}</label>
+                        <input id="{$col}" name="{$col}" type="file" accept="image/*" class="form-control" <?= (!isset(\$CurrentRecord)) ? '{$reqAttr}' : '' ?>>
+                        <?php if (isset(\$CurrentRecord) && !empty(\${$col})) { ?>
+                            <div class="mt-2">
+                                <img src="<?= base_url('uploads/{$slug}/' . \${$col}) ?>" style="max-height: 80px; border-radius: 4px;" alt="{$title}">
+                                <small class="text-muted d-block">Leave blank to keep existing image</small>
+                            </div>
+                        <?php } ?>
+                    </div>\n
+HTML;
+
             case 'file':
-                 
-                 // code...
-                 $html.='
-          <div class="form-group col-md-6 mb-3">
-            <label for="'.$key.'" class="control-label mb-1">'.ucfirst($key).' </label>
-            
-        <?php if(isset($CurrentRecord)){ ?>
-        <input id="'.$key.'" name="'.$key.'" type="file" class="form-control" value="<?=base_url(\'uploads/'.strtolower($this->name).'s/\'.$'.$key.')?>" >
-        <p><a href="<?=base_url(\'uploads/'.strtolower($this->name).'s/\'.$'.$key.')?>"> Download </a></p>
-        <?php } else {?>
-        <input id="'.$key.'" name="'.$key.'" type="file" class="form-control" value="<?=base_url(\'uploads/'.strtolower($this->name).'s/\'.$'.$key.')?>" '.$required.'>
-        <?php } ?>
-          </div>
-          ';
-                 break;
-            
-             
-             default:
-                 // code...
-                 break;
-         }
-        
-         var_dump($html);
-         return $html;
-         
-     }
+                return <<<HTML
+                    <div class="col-md-6">
+                        <label for="{$col}" class="form-label font-weight-bold">{$title} {$reqStar}</label>
+                        <input id="{$col}" name="{$col}" type="file" class="form-control" <?= (!isset(\$CurrentRecord)) ? '{$reqAttr}' : '' ?>>
+                        <?php if (isset(\$CurrentRecord) && !empty(\${$col})) { ?>
+                            <div class="mt-2">
+                                <a href="<?= base_url('uploads/{$slug}/' . \${$col}) ?>" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="fas fa-download me-1"></i>Current File</a>
+                                <small class="text-muted d-block">Leave blank to keep existing file</small>
+                            </div>
+                        <?php } ?>
+                    </div>\n
+HTML;
+
+            case 'fixedselect':
+                $optsHtml = "<option value=\"\">-- Select {$title} --</option>\n";
+                foreach ($options as $k => $v) {
+                    $optsHtml .= "                            <option value=\"{$k}\" <?= (\${$col} == '{$k}') ? 'selected' : '' ?>>{$v}</option>\n";
+                }
+                return <<<HTML
+                    <div class="col-md-6">
+                        <label for="{$col}" class="form-label font-weight-bold">{$title} {$reqStar}</label>
+                        <select id="{$col}" name="{$col}" class="form-select" {$reqAttr}>
+{$optsHtml}                        </select>
+                    </div>\n
+HTML;
+
+            default:
+                return <<<HTML
+                    <div class="col-md-6">
+                        <label for="{$col}" class="form-label font-weight-bold">{$title} {$reqStar}</label>
+                        <input id="{$col}" name="{$col}" type="text" class="form-control" value="<?= old('{$col}', \${$col}) ?>" {$reqAttr}>
+                    </div>\n
+HTML;
+        }
+    }
 }

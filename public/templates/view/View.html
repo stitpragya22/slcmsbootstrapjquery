@@ -1,90 +1,79 @@
 <?php
-
-    $SubmitUrl= base_url('{Name}Controller/store');   
-    
-{fieldVariables}
-
+    $SubmitUrl = base_url('admin/{folder}/store');
+    {fieldVariables}
 ?>
 
 <?= $this->extend("layouts/admindash") ?>
 
 <?= $this->section("body") ?>
 <div class="row">
-    
-    <?php if(session()->get('message')!=""){?>
-    <div class="sufee-alert alert with-close alert-<?=session()->get('mtype')?> alert-dismissible fade show col-md-12">
-        <span class="badge badge-pill badge-<?=session()->get('mtype')?>"><?=session()->get('mtype')?></span>
-        <?=session()->get('message')?>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">×</span>
-        </button>
+    <?php if (session()->get('message') != "") { ?>
+    <div class="alert alert-<?= session()->get('mtype') ?? 'info' ?> alert-dismissible fade show col-md-12" role="alert">
+        <?= session()->get('message') ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     <?php } ?>
-    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <strong class="card-name">Admin {Name} </strong>
-                            </div>
-                            <div class="card-body">
-                                <!-- Credit Card -->
-                                <div id="pay-invoice">
-                                    <div class="card-body">
-                                        <div class="card-name">
-                                            <h3 class="text-center">Add / Edit {Name} </h3>
-                                        </div>
-                                        <hr>
-                                        <form action="<?=$SubmitUrl?>" method="post" class="row" enctype="multipart/form-data">
-                                        <?php
-                                        if(isset($CurrentRecord)){ ?>
-                                        <input type="hidden" name="id" value="<?=$CurrentRecord['id']?>" >
-                                        <?php }
-                                        ?>
-                                            {FormFields}
-                                            
-                                            
-                                            <button id="payment-button" type="submit" class="btn btn-lg btn-info btn-block">&nbsp;
-                                                    <span id="payment-button-amount"><?=(isset($CurrentRecord))?'UPDATE':'ADD'?></span>
-                                                </button>
-                                            
-                                            <div>
-                                                
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
 
-                            </div>
-                        </div> <!-- .card -->
+    <div class="col-lg-12 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 text-primary"><strong>Add / Edit {Name}</strong></h5>
+            </div>
+            <div class="card-body">
+                <form action="<?= $SubmitUrl ?>" method="post" class="row g-3" enctype="multipart/form-data">
+                    <?= csrf_field() ?>
+                    <?php if (isset($CurrentRecord)) { ?>
+                    <input type="hidden" name="id" value="<?= $CurrentRecord['id'] ?>">
+                    <?php } ?>
+                    
+                    {FormFields}
 
+                    <div class="col-12 mt-4">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <?= (isset($CurrentRecord)) ? 'Update ' . '{Name}' : 'Save ' . '{Name}' ?>
+                        </button>
+                        <?php if (isset($CurrentRecord)) { ?>
+                        <a href="<?= base_url('admin/{folder}') ?>" class="btn btn-outline-secondary ms-2">Cancel</a>
+                        <?php } ?>
                     </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <strong class="card-title">Data Table For : {Name}</strong>
-                            </div>
-                            <div class="card-body">
-                                <table id="bootstrap-data-table" class="table table-striped table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            {TableHeads}
-                                            <th>Action</th>
-                                            
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php $i=1; foreach ($records as $record){?>
-                                        <tr>
-                                            <td><?=$i++;?></td>
-                                            {TableFields}
-                                            
-                                            <td><a href="<?=base_url('{Name}Controller/index/'.$record['id'])?>"  data-bs-toggle="tooltip" title="Edit This Record" >Edit</a> &nbsp; <a class="deletelink" href="<?=base_url('{Name}Controller/delete/'.$record['id'])?>"  onclick="return confirm('Are you sure you want to delete this item?')" data-bs-toggle="tooltip" title="Delete This Record">Delete</a></td>
-                                        </tr>
-                                        <?php } ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+        <div class="card shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0"><strong>List of {Name}</strong></h5>
+            </div>
+            <div class="card-body table-responsive">
+                <table id="bootstrap-data-table" class="table table-striped table-hover table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            {TableHeads}
+                            <th style="width: 140px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $i = 1; foreach ($records as $record) { ?>
+                        <tr>
+                            <td><?= $i++; ?></td>
+                            {TableFields}
+                            <td>
+                                <a href="<?= base_url('admin/{folder}/' . $record['id']) ?>" class="btn btn-sm btn-outline-primary" title="Edit">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a href="<?= base_url('admin/{folder}/delete/' . $record['id']) ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this record?')" title="Delete">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 <?= $this->endSection() ?>
