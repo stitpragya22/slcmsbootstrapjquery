@@ -1,0 +1,14 @@
+{
+  "name": "Blog & Article Publisher",
+  "slug": "blog-manager",
+  "version": "1.0.0",
+  "description": "Publish modern SEO-optimized blog posts, news, and articles with rich formatting and category management.",
+  "author": "SLCMS Content Team",
+  "author_url": "https://slcms.stitpragya.in",
+  "icon": "newspaper",
+  "category": "Content & Media",
+  "settings": {
+    "posts_per_page": 10,
+    "allow_comments": false
+  }
+}

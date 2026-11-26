@@ -118,6 +118,16 @@
 
     <!-- Page Specific Styles Slot -->
     <?= $this->renderSection('styles') ?>
+
+    <!-- Global Custom Header CSS from Settings -->
+    <?php if ($customCss = get_cms_setting('custom_header_css')) : ?>
+        <style id="slcms-custom-css"><?= $customCss ?></style>
+    <?php endif ?>
+
+    <!-- Global Custom Header JS from Settings -->
+    <?php if ($customHeaderJs = get_cms_setting('custom_header_js')) : ?>
+        <?= $customHeaderJs ?>
+    <?php endif ?>
 </head>
 <body>
 
@@ -200,5 +210,10 @@
 
     <!-- Page Specific Scripts Slot -->
     <?= $this->renderSection('scripts') ?>
+
+    <!-- Global Custom Footer JS from Settings -->
+    <?php if ($customFooterJs = get_cms_setting('custom_footer_js')) : ?>
+        <?= $customFooterJs ?>
+    <?php endif ?>
 </body>
 </html>

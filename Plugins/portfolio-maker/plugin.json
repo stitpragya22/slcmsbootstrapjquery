@@ -1,0 +1,14 @@
+{
+  "name": "Creative Portfolio Showcase",
+  "slug": "portfolio-maker",
+  "version": "1.0.0",
+  "description": "Showcase projects, client case studies, creative work, and design portfolios with responsive filterable grids.",
+  "author": "Stitpragya Technologies",
+  "author_url": "https://stitpragya.in",
+  "icon": "briefcase",
+  "category": "Showcase & Portfolio",
+  "settings": {
+    "grid_columns": 3,
+    "show_filter_bar": true
+  }
+}

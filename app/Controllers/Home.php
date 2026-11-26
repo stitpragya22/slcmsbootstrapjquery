@@ -31,6 +31,35 @@ class Home extends BaseController
     }
 
     /**
+     * Display a public Custom Page (e.g. /page/about-us)
+     */
+    public function page(string $slug)
+    {
+        $slug = preg_replace('/[^a-zA-Z0-9_-]/', '', $slug);
+        $db = \Config\Database::connect();
+
+        $page = null;
+        if ($db->tableExists('cms_pages')) {
+            $page = $db->table('cms_pages')
+                ->where('slug', $slug)
+                ->where('is_published', 1)
+                ->get()
+                ->getRowArray();
+        }
+
+        if (!$page) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Page '{$slug}' not found.");
+        }
+
+        $data = [
+            'page'        => $page,
+            'currentUser' => auth()->loggedIn() ? auth()->user() : null,
+        ];
+
+        return view('pages/show', $data);
+    }
+
+    /**
      * Public WordPress.org-style Plugin Marketplace Directory
      */
     public function marketplace()

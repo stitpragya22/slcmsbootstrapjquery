@@ -140,10 +140,18 @@ $tools = new ToolsController();
           <a href="<?= base_url('admin/plugins') ?>" class="list-group-item list-group-item-action py-2 ripple">
             <i class="fas fa-plug fa-fw me-3 text-info"></i><span>Installed Addons</span>
           </a>
+          <a href="<?= base_url('admin/pages') ?>" class="list-group-item list-group-item-action py-2 ripple">
+            <i class="fas fa-file-alt fa-fw me-3 text-success"></i><span>Custom Pages</span>
+          </a>
           <?php
           echo '<li class="sidebar-header font-weight-bold">
 						Other Settings
 					</li>';
+          ?>
+          <a href="<?= base_url('admin/settings') ?>" class="list-group-item list-group-item-action py-2 ripple">
+            <i class="fas fa-sliders-h fa-fw me-3 text-primary"></i><span>Global Code & Settings</span>
+          </a>
+          <?php
           $settings_menu = [];
 
           // {Settings Menu Array}

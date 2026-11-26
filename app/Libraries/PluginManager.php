@@ -342,6 +342,32 @@ class PluginManager
                 'downloads'   => '1,890',
                 'price'       => 'Free',
             ],
+            [
+                'slug'        => 'blog-manager',
+                'name'        => 'Blog & Article Publisher',
+                'version'     => '1.0.0',
+                'description' => 'Publish modern SEO-optimized blog posts, news, and articles with rich formatting and category management.',
+                'author'      => 'SLCMS Content Team',
+                'author_url'  => 'https://slcms.stitpragya.in',
+                'icon'        => 'newspaper',
+                'category'    => 'Content & Media',
+                'rating'      => 4.9,
+                'downloads'   => '1,450',
+                'price'       => 'Free',
+            ],
+            [
+                'slug'        => 'portfolio-maker',
+                'name'        => 'Creative Portfolio Showcase',
+                'version'     => '1.0.0',
+                'description' => 'Showcase projects, client case studies, creative work, and design portfolios with responsive filterable grids.',
+                'author'      => 'Stitpragya Technologies',
+                'author_url'  => 'https://stitpragya.in',
+                'icon'        => 'briefcase',
+                'category'    => 'Showcase & Portfolio',
+                'rating'      => 4.8,
+                'downloads'   => '1,120',
+                'price'       => 'Free',
+            ],
         ];
 
         foreach ($catalog as &$item) {

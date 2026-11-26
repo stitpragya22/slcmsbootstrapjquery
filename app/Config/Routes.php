@@ -12,6 +12,7 @@ $routes->get('marketplace/developer/(:any)', 'Home::marketplaceDeveloper/$1');
 $routes->get('marketplace/download/(:segment)', 'Home::marketplaceDownload/$1');
 $routes->get('docs', 'Home::docs');
 $routes->get('starter', 'Home::starter');
+$routes->get('page/(:segment)', 'Home::page/$1');
 
 // Shield Authentication Routes
 service('auth')->routes($routes);
@@ -46,6 +47,19 @@ $routes->group("admin", ["filter" => "group:admin,superadmin"], function ($route
     $routes->get("generator/modules", "Generator::modules");
     $routes->post("generator/generate", "Generator::controllergenerate");
     $routes->get("generator/delete/(:num)", "Generator::deleteModule/$1");
+
+    // Custom Pages Management
+    $routes->get('pages', 'PagesController::index');
+    $routes->get('pages/create', 'PagesController::create');
+    $routes->post('pages/store', 'PagesController::store');
+    $routes->get('pages/edit/(:num)', 'PagesController::edit/$1');
+    $routes->post('pages/update/(:num)', 'PagesController::update/$1');
+    $routes->get('pages/delete/(:num)', 'PagesController::delete/$1');
+    $routes->get('pages/toggle/(:num)', 'PagesController::toggle/$1');
+
+    // Global CMS Settings & Custom Code
+    $routes->get('settings', 'SettingsController::index');
+    $routes->post('settings/update', 'SettingsController::update');
 
     // Dynamic CMS Module Routes (Zero File Mutation)
     try {

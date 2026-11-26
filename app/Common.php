@@ -13,3 +13,30 @@
  *
  * @see: https://codeigniter.com/user_guide/extending/common.html
  */
+
+if (!function_exists('get_cms_setting')) {
+    /**
+     * Retrieve a global CMS setting with static in-memory caching
+     */
+    function get_cms_setting(string $key, string $default = ''): string
+    {
+        static $settings = null;
+
+        if ($settings === null) {
+            $settings = [];
+            try {
+                $db = \Config\Database::connect();
+                if ($db->tableExists('cms_settings')) {
+                    $rows = $db->table('cms_settings')->get()->getResultArray();
+                    foreach ($rows as $r) {
+                        $settings[$r['key']] = $r['value'];
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Table might not exist yet during migrations
+            }
+        }
+
+        return $settings[$key] ?? $default;
+    }
+}
